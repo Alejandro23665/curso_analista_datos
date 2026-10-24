@@ -150,9 +150,7 @@ th { color: var(--muted); font-weight: 700; font-size: .78rem; text-transform: u
 .markdown h3 { margin-top: 1.2rem; }
 .markdown ul, .markdown ol { padding-left: 1.4rem; }
 .markdown li { margin-bottom: .25rem; }
-.markdown :not(pre) > code { background: var(--code-bg); border: 1px solid var(--line); padding: .08rem .35rem; border-radius: 5px; color: #0a7a3a; }
-.markdown pre { background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px; padding: .9rem 1rem; overflow-x: auto; line-height: 1.5; }
-.markdown pre code { background: none; border: none; padding: 0; color: var(--text); }
+.markdown :not(pre) > code { background: #edf1f6; padding: .1rem .4rem; border-radius: 5px; color: #0b5c33; font-size: .9em; font-weight: 600; }
 .markdown blockquote { margin: 1rem 0; padding: .6rem 1rem; border-left: 4px solid var(--green); background: rgba(10, 159, 73, .08); border-radius: 0 8px 8px 0; }
 .markdown blockquote p { margin: 0; }
 .markdown table { margin: 1rem 0; }
@@ -221,3 +219,23 @@ input[type="checkbox"], input[type="radio"] { accent-color: var(--green); margin
 .login input { padding: .7rem .8rem; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: inherit; }
 .login input:focus { outline: 2px solid var(--green); border-color: transparent; }
 .login-error { color: var(--red); margin: 0; font-size: .9rem; }
+
+/* Bloques de código (teoría y soluciones) */
+.codeblock { margin: 1.1rem 0; border-radius: 12px; overflow: hidden; background: #0f1e33; border: 1px solid #1f3554; box-shadow: 0 2px 6px rgba(20, 35, 58, .12); }
+.codeblock figcaption { display: flex; align-items: center; justify-content: space-between; gap: .6rem; padding: .4rem .6rem .4rem .9rem; background: #0a1626; border-bottom: 1px solid #1f3554; }
+.codeblock .lang { font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #9fb3c8; display: inline-flex; align-items: center; gap: .4rem; }
+.codeblock .lang::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #5b6b7e; }
+.codeblock .lang-python::before { background: #ffd43b; }
+.codeblock .lang-sql::before { background: #3dd6f5; }
+.codeblock .lang-bash::before, .codeblock .lang-dockerfile::before { background: #03ef62; }
+.codeblock .lang-formula::before { background: #c7a5ff; }
+.codeblock button { background: transparent; border: 1px solid #2c4a70; color: #c9d6e3; border-radius: 7px; padding: .2rem .6rem; font: inherit; font-size: .75rem; font-weight: 700; cursor: pointer; }
+.codeblock button:hover { background: #1a2f4b; color: #ffffff; }
+.codeblock pre { margin: 0; padding: 1rem 1.15rem; overflow-x: auto; background: transparent; border: none; }
+.codeblock code { display: block; color: #e6edf3; font-size: .95rem; line-height: 1.7; tab-size: 4; white-space: pre; background: none; border: none; padding: 0; font-weight: 400; }
+.tok-kw { color: #ff9ecf; font-weight: 600; }
+.tok-str { color: #a8e6a1; }
+.tok-num { color: #ffd580; }
+.tok-com { color: #8fa3b8; font-style: italic; }
+.tok-fn { color: #82cfff; }
+.tok-bi { color: #6ee7d8; }

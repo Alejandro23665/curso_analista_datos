@@ -18,7 +18,7 @@ from sqlalchemy.orm import Session
 from starlette.concurrency import run_in_threadpool
 
 from . import auth, content, sandbox
-from .config import APP_TZ, CORS_ORIGINS, HOURS_PER_DAY, ON_VERCEL
+from .config import APP_TZ, CORS_ORIGINS, DATABASE_URL_SOURCE, HOURS_PER_DAY, ON_VERCEL
 from .db import Base, engine, get_db
 from .models import Activity, Attempt, Note, TopicProgress
 
@@ -65,6 +65,16 @@ app.add_middleware(
     CORSMiddleware, allow_origins=CORS_ORIGINS, allow_credentials=True, allow_methods=["*"], allow_headers=["*"],
 )
 
+def _db_error_message(exc: Exception) -> str:
+    """Explica por qué falló la base, sin mostrar contraseñas (los errores de psycopg no las incluyen)."""
+    if DATABASE_URL_SOURCE is None and ON_VERCEL:
+        return ("No hay ninguna base de datos configurada: falta la variable DATABASE_URL. "
+                "En Vercel: Storage → Create Database → Neon → Connect, y luego Redeploy.")
+    first_line = (str(exc).strip().splitlines() or [""])[0][:300]
+    return "La base de datos no está disponible (%s: %s). Variable usada: %s." % (
+        type(exc).__name__, first_line, DATABASE_URL_SOURCE or "ninguna (valor por defecto local)")
+
+
 PUBLIC_PATHS = {"/api/health", "/api/session", "/api/login", "/api/logout"}
 
 
@@ -78,12 +88,9 @@ async def guard(request: Request, call_next):
         if not _ready:
             try:
                 await run_in_threadpool(ensure_ready)
-            except Exception:
+            except Exception as exc:
                 log.exception("No se pudo inicializar la base de datos")
-                return JSONResponse(
-                    {"detail": "La base de datos no está disponible. Revisa DATABASE_URL y los logs del servidor."},
-                    status_code=503,
-                )
+                return JSONResponse({"detail": _db_error_message(exc)}, status_code=503)
     return await call_next(request)
 
 
@@ -196,7 +203,7 @@ class LoginBody(BaseModel):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok"}
+    return {"status": "ok", "database_configured": DATABASE_URL_SOURCE is not None, "database_ready": _ready}
 
 
 @app.get("/api/session")

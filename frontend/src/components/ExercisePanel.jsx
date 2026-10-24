@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "../api.js";
 import { runPython } from "../pyRunner.js";
 import { KINDS } from "../util.js";
+import CodeBlock from "./CodeBlock.jsx";
 import CodeEditor from "./CodeEditor.jsx";
 import Markdown from "./Markdown.jsx";
 import ResultTable from "./ResultTable.jsx";
@@ -55,7 +56,7 @@ function Helpers({ exercise, solution }) {
       {showSolution && (
         <div>
           <p className="muted small">Solución de referencia (hay más de una forma correcta):</p>
-          <pre className="solution">{solution}</pre>
+          <CodeBlock code={solution.replace(/\n$/, "")} lang={exercise.kind === "sql" ? "sql" : "python"} />
         </div>
       )}
     </div>
