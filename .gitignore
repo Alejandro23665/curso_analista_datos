@@ -13,3 +13,16 @@ __pycache__/
 
 # Vercel
 .vercel/
+
+# Claude Code: binario del motor de Impeccable (se vuelve a descargar con `npx impeccable install`) y ajustes personales
+.claude/skills/impeccable/scripts/bin/
+.claude/settings.local.json
+
+# Impeccable: capturas de revisión y estado de sesión (se regeneran)
+.impeccable/review/
+.impeccable/questions/
+.impeccable/hook.cache.json
+
+# Contexto personal del usuario (no se publica)
+CLAUDE.md
+PRODUCT.md

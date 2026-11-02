@@ -1,6 +1,8 @@
 """Currículo: fases, temas, teoría y ejercicios. Todo el contenido vive en archivos Python/Markdown,
 así puedes editarlo o ampliarlo sin tocar la base de datos."""
-from . import fase_bi, fase_de, fase_empleo, fase_estadistica, fase_fundamentos, fase_ia_asistida, fase_ml, fase_pandas, fase_python, fase_sql
+from . import (fase_bi, fase_carrera, fase_de, fase_empleo, fase_estadistica, fase_fundamentos, fase_ia_asistida, fase_ia_avanzada,
+               fase_ml, fase_pandas, fase_producto, fase_python, fase_sql)
+from .recursos import RECURSOS, seccion_recursos
 
 PHASES = [
     {"slug": "python", "title": "Fase 1 · Python para datos",
@@ -19,10 +21,19 @@ PHASES = [
      "description": "Fundamentos de machine learning y de LLMs/RAG para tu perfil de datos."},
     {"slug": "empleo", "title": "Fase 8 · Camino al primer empleo",
      "description": "Portafolio, CV, LinkedIn y preparación de entrevistas técnicas."},
+    {"slug": "producto", "title": "Sistemas, producto y startup",
+     "description": "Python profesional, APIs, seguridad, arquitectura, diseño de sistemas, producción y validación de startups."},
+    {"slug": "carrera", "title": "Carrera: empleo y freelance en IA y backend",
+     "description": "Interfaces para apps con IA, freelance, algoritmos para entrevistas, inglés técnico y búsqueda de empleo."},
 ]
 
-TOPICS = [t for module in (fase_fundamentos, fase_python, fase_sql, fase_pandas, fase_ia_asistida, fase_estadistica, fase_bi, fase_de, fase_ml, fase_empleo)
+TOPICS = [t for module in (fase_fundamentos, fase_python, fase_sql, fase_pandas, fase_ia_asistida, fase_estadistica, fase_bi, fase_de, fase_ml, fase_producto,
+                           fase_ia_avanzada, fase_carrera, fase_empleo)
           for t in module.TOPICS]
+
+# Añade la sección "Para profundizar" a los temas que tienen recursos recomendados
+TOPICS = [dict(t, theory=t["theory"].rstrip() + "\n" + seccion_recursos(t["slug"])) if t["slug"] in RECURSOS else t
+          for t in TOPICS]
 
 _TOPIC_BY_SLUG = {t["slug"]: t for t in TOPICS}
 _EXERCISE_BY_ID = {}
@@ -55,3 +66,7 @@ def public_exercise(exercise):
     """Ejercicio listo para enviar al navegador (sin la respuesta de los quizzes)."""
     data = {k: v for k, v in exercise.items() if k not in ("answer", "topic")}
     return data
+
+
+from .tracks import (TRACKS, get_track, track_topic_slugs, tracks_with_topic, visible_topic_slugs,  # noqa: E402,F401
+                     visible_tracks)

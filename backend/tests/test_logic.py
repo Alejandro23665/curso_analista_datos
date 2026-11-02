@@ -165,3 +165,61 @@ class ConfigAndAuthTests(unittest.TestCase):
             self.assertFalse(auth.check_password("ñandú"), "No debe fallar con caracteres no ASCII")
         finally:
             auth.APP_PASSWORD = original
+
+
+class EnglishTests(unittest.TestCase):
+    def setUp(self):
+        from app import english
+        from app.content import ingles
+        self.english, self.ingles = english, ingles
+
+    def test_normaliza_contracciones_puntuacion_y_apostrofos(self):
+        n = self.english.normalize
+        self.assertEqual(n("I’m building a RAG-based bot!"), "i am building a rag based bot")
+        self.assertEqual(n("I'm done"), n("I am done"))
+        self.assertEqual(n("dont worry"), n("Don't worry."))
+
+    def test_traduccion_con_variantes_y_diferencias(self):
+        ex = {"kind": "translate", "accepted": ["I fixed the bug yesterday.", "Yesterday I fixed the bug."]}
+        self.assertTrue(self.english.check(ex, text="yesterday i fixed the bug")["correct"])
+        r = self.english.check(ex, text="I fix the bug yesterday")
+        self.assertFalse(r["correct"])
+        self.assertEqual((r["missing"], r["extra"]), (["fixed"], ["fix"]))
+
+    def test_hueco_y_eleccion(self):
+        self.assertTrue(self.english.check({"kind": "fill", "accepted": ["works"]}, text=" Works ")["correct"])
+        self.assertFalse(self.english.check({"kind": "fill", "accepted": ["works"]}, text="work")["correct"])
+        self.assertTrue(self.english.check({"kind": "choice", "answer": 2}, answer=2)["correct"])
+        listen = self.english.check({"kind": "listen", "answer": 0, "audio": "Hi"}, answer=1)
+        self.assertEqual((listen["correct"], listen["transcript"]), (False, "Hi"))
+
+    def test_hablar_tolera_pequenos_errores_de_reconocimiento(self):
+        ex = {"kind": "speak", "accepted": ["The most similar chunks are retrieved and sent to the model."]}
+        self.assertTrue(self.english.check(ex, text="the most similar chunks are retrieved and send to the model")["correct"])
+        self.assertFalse(self.english.check(ex, text="the model")["correct"])
+
+    def test_nivel_de_la_prueba(self):
+        level = self.english.placement_level
+        self.assertEqual(level({"A2": 0.5, "B1": 0.9, "B2": 0.9}), "A1")
+        self.assertEqual(level({"A2": 0.83, "B1": 0.67, "B2": 0.33}), "B1")
+        self.assertEqual(level({"A2": 1, "B1": 1, "B2": 0.67}), "B2")
+        questions = [{"id": "a", "level": "A2", "answer": 1}, {"id": "b", "level": "A2", "answer": 0}]
+        self.assertEqual(self.english.placement_scores(questions, {"a": 1, "b": 3}), {"A2": 0.5})
+
+    def test_repaso_espaciado(self):
+        day = date(2026, 11, 2)
+        self.assertEqual(self.english.schedule(0, "bien", day), (1, date(2026, 11, 3)))
+        self.assertEqual(self.english.schedule(3, "otra", day), (0, day))
+        self.assertEqual(self.english.schedule(0, "dificil", day)[0], 1)
+        self.assertEqual(self.english.schedule(6, "facil", day)[0], 6)
+        with self.assertRaises(ValueError):
+            self.english.schedule(0, "regular", day)
+
+    def test_no_se_filtran_respuestas(self):
+        for unit in self.ingles.UNITS:
+            for ex in unit["exercises"]:
+                public = self.ingles.public_exercise(ex)
+                self.assertFalse({"answer", "accepted", "explanation"} & set(public), ex["id"])
+                if ex["kind"] == "speak" and not ex["show_target"]:
+                    self.assertNotIn("target", public)
+        self.assertNotIn("answer", self.ingles.public_question(self.ingles.PLACEMENT[0]))

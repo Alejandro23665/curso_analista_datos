@@ -1,6 +1,6 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
-from sqlalchemy import Boolean, DateTime, Integer, String, Text
+from sqlalchemy import Boolean, Date, DateTime, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .db import Base
@@ -53,3 +53,28 @@ class Activity(Base):
     kind: Mapped[str] = mapped_column(String(30))
     topic_slug: Mapped[str] = mapped_column(String(80))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+
+
+class EnglishPlacement(Base):
+    """Resultado de cada prueba de nivel de inglés (se usa la más reciente)."""
+
+    __tablename__ = "english_placement"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    level: Mapped[str] = mapped_column(String(4))
+    scores: Mapped[str] = mapped_column(Text)  # JSON: {"A2": 0.83, "B1": 0.5, "B2": 0.17}
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+
+
+class EnglishCard(Base):
+    """Estado de repaso espaciado de cada tarjeta de vocabulario ya vista."""
+
+    __tablename__ = "english_cards"
+
+    card_id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    box: Mapped[int] = mapped_column(Integer, default=0)
+    due: Mapped[date] = mapped_column(Date, index=True)
+    introduced: Mapped[date] = mapped_column(Date, index=True)  # día en que se vio por primera vez
+    reviews: Mapped[int] = mapped_column(Integer, default=0)
+    lapses: Mapped[int] = mapped_column(Integer, default=0)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)

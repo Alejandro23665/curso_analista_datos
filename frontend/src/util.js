@@ -1,22 +1,24 @@
+import { CircleHelp, Code, Database, ListChecks } from "lucide-react";
+
 export const LEVELS = {
-  fuerte: { label: "Fortaleza", color: "var(--green)" },
-  regular: { label: "Regular", color: "var(--yellow)" },
-  debil: { label: "A reforzar", color: "var(--red)" },
-  en_progreso: { label: "En progreso", color: "var(--cyan)" },
-  sin_datos: { label: "Sin practicar", color: "var(--muted)" },
+  fuerte: { label: "Fortaleza", color: "var(--ok)" },
+  regular: { label: "Regular", color: "var(--warn)" },
+  debil: { label: "A reforzar", color: "var(--bad)" },
+  en_progreso: { label: "En progreso", color: "var(--blue)" },
+  sin_datos: { label: "Sin practicar", color: "var(--muted-cell)" },
 };
 
 export const KINDS = {
-  python: { icon: "🐍", label: "Python" },
-  sql: { icon: "🗄️", label: "SQL" },
-  quiz: { icon: "❓", label: "Quiz" },
-  checklist: { icon: "✅", label: "Lista" },
+  python: { Icon: Code, label: "Python" },
+  sql: { Icon: Database, label: "SQL" },
+  quiz: { Icon: CircleHelp, label: "Quiz" },
+  checklist: { Icon: ListChecks, label: "Lista" },
 };
 
 export const STATUS = {
-  completado: { label: "Completado", icon: "✓" },
-  en_curso: { label: "En curso", icon: "◐" },
-  pendiente: { label: "Pendiente", icon: "○" },
+  completado: { label: "Completado", square: "done" },
+  en_curso: { label: "En curso", square: "doing" },
+  pendiente: { label: "Pendiente", square: "todo" },
 };
 
 export function percent(value) {

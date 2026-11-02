@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Check, CircleCheck, CircleX, Eye, Lightbulb, Play } from "lucide-react";
 import { api } from "../api.js";
 import { runPython } from "../pyRunner.js";
 import { KINDS } from "../util.js";
@@ -9,15 +10,19 @@ import ResultTable from "./ResultTable.jsx";
 
 // `onSubmit(body)` envía el intento al servidor y devuelve su respuesta.
 export default function ExercisePanel({ exercise, solved, onSubmit }) {
-  const meta = KINDS[exercise.kind];
+  const { Icon, label } = KINDS[exercise.kind];
   return (
     <section className="exercise">
       <header className="exercise-head">
-        <span className="chip">
-          {meta.icon} {meta.label}
+        <h2>{exercise.title}</h2>
+        <span className="tag">
+          <Icon size={14} aria-hidden="true" /> {label}
         </span>
-        <h3>{exercise.title}</h3>
-        {solved && <span className="badge ok">✓ Resuelto</span>}
+        {solved && (
+          <span className="tag ok">
+            <Check size={14} aria-hidden="true" /> Resuelto
+          </span>
+        )}
       </header>
       <div className="exercise-prompt">
         <Markdown>{exercise.prompt}</Markdown>
@@ -27,6 +32,16 @@ export default function ExercisePanel({ exercise, solved, onSubmit }) {
       {exercise.kind === "quiz" && <QuizExercise exercise={exercise} onSubmit={onSubmit} />}
       {exercise.kind === "checklist" && <ChecklistExercise exercise={exercise} onSubmit={onSubmit} solved={solved} />}
     </section>
+  );
+}
+
+export function Verdict({ ok, children, detail }) {
+  const Icon = ok ? CircleCheck : CircleX;
+  return (
+    <p className={"verdict " + (ok ? "ok" : "bad")}>
+      <Icon size={18} aria-hidden="true" /> {children}
+      {detail && <span className="detail">{detail}</span>}
+    </p>
   );
 }
 
@@ -40,19 +55,23 @@ function Helpers({ exercise, solution }) {
 
   return (
     <div className="helpers">
-      <div className="row">
+      <div className="actions">
         {exercise.hint && (
           <button className="btn ghost small" onClick={() => setHint((value) => !value)}>
-            💡 {hint ? "Ocultar pista" : "Pista"}
+            <Lightbulb size={14} aria-hidden="true" /> {hint ? "Ocultar pista" : "Pista"}
           </button>
         )}
         {!showSolution && (
           <button className="btn ghost small" onClick={revealSolution}>
-            👀 Ver solución
+            <Eye size={14} aria-hidden="true" /> Ver solución
           </button>
         )}
       </div>
-      {hint && <p className="hint">💡 {exercise.hint}</p>}
+      {hint && (
+        <p className="hint">
+          <Lightbulb size={16} aria-hidden="true" /> <span>{exercise.hint}</span>
+        </p>
+      )}
       {showSolution && (
         <div>
           <p className="muted small">Solución de referencia (hay más de una forma correcta):</p>
@@ -91,17 +110,19 @@ function PythonExercise({ exercise, onSubmit }) {
   }
 
   return (
-    <div className="code-block">
+    <div className="stack">
       <CodeEditor value={code} onChange={setCode} language="python" onRun={() => !busy && execute(false)} />
-      <div className="row actions">
+      <div className="actions">
         <button className="btn" disabled={busy} onClick={() => execute(false)}>
-          ▶ Ejecutar
+          <Play size={15} aria-hidden="true" /> Ejecutar
         </button>
         <button className="btn primary" disabled={busy} onClick={() => execute(true)}>
-          ✔ Comprobar
+          <Check size={16} aria-hidden="true" /> Comprobar
         </button>
         {busy && <span className="muted small">{status || "Ejecutando… (la primera vez descarga Python, puede tardar)"}</span>}
-        <span className="muted small push">Ctrl + Enter para ejecutar</span>
+        <span className="muted small push">
+          <kbd>Ctrl</kbd> + <kbd>Enter</kbd> para ejecutar
+        </span>
       </div>
       {outcome && <Console outcome={outcome} />}
       <Helpers exercise={exercise} solution={exercise.solution} />
@@ -111,13 +132,11 @@ function PythonExercise({ exercise, onSubmit }) {
 
 function Console({ outcome }) {
   return (
-    <div className="console">
+    <div className="console" aria-live="polite">
       {outcome.output ? <pre>{outcome.output}</pre> : null}
       {outcome.error && <pre className="err">{outcome.error}</pre>}
-      {outcome.check && !outcome.error && outcome.passed && <p className="verdict ok">🎉 ¡Correcto! Pasó todas las pruebas.</p>}
-      {outcome.check && !outcome.error && !outcome.passed && (
-        <p className="verdict bad">❌ Aún no: {outcome.feedback || "alguna prueba falló."}</p>
-      )}
+      {outcome.check && !outcome.error && outcome.passed && <Verdict ok>Correcto: pasó todas las pruebas.</Verdict>}
+      {outcome.check && !outcome.error && !outcome.passed && <Verdict>Aún no: {outcome.feedback || "alguna prueba falló."}</Verdict>}
       {!outcome.check && !outcome.error && !outcome.output && <p className="muted small">Sin salida. Usa print() para ver valores.</p>}
     </div>
   );
@@ -159,22 +178,24 @@ function SqlExercise({ exercise, onSubmit }) {
   }
 
   return (
-    <div className="code-block">
+    <div className="stack">
       <CodeEditor value={query} onChange={setQuery} language="sql" height="220px" onRun={() => !busy && run()} />
-      <div className="row actions">
+      <div className="actions">
         <button className="btn" disabled={busy} onClick={run}>
-          ▶ Ejecutar
+          <Play size={15} aria-hidden="true" /> Ejecutar
         </button>
         <button className="btn primary" disabled={busy} onClick={submit}>
-          ✔ Enviar respuesta
+          <Check size={16} aria-hidden="true" /> Enviar respuesta
         </button>
-        <span className="muted small push">Ctrl + Enter para ejecutar</span>
+        <span className="muted small push">
+          <kbd>Ctrl</kbd> + <kbd>Enter</kbd> para ejecutar
+        </span>
       </div>
       {view && (
-        <div className="console">
+        <div className="console" aria-live="polite">
           {view.error && <pre className="err">{view.error}</pre>}
-          {view.verdict && view.verdict.correct && <p className="verdict ok">🎉 ¡Correcto!</p>}
-          {view.verdict && !view.verdict.correct && <p className="verdict bad">❌ {view.verdict.text}</p>}
+          {view.verdict && view.verdict.correct && <Verdict ok>Correcto.</Verdict>}
+          {view.verdict && !view.verdict.correct && <Verdict>{view.verdict.text}</Verdict>}
           {view.columns && <ResultTable columns={view.columns} rows={view.rows} truncated={view.truncated} />}
         </div>
       )}
@@ -201,7 +222,7 @@ function QuizExercise({ exercise, onSubmit }) {
 
   const locked = Boolean(result && result.correct);
   return (
-    <div className="quiz">
+    <div className="stack">
       <ul className="options">
         {exercise.options.map((text, index) => {
           let state = "";
@@ -225,24 +246,26 @@ function QuizExercise({ exercise, onSubmit }) {
           );
         })}
       </ul>
-      <div className="row actions">
+      <div className="actions">
         <button className="btn primary" disabled={busy || locked || choice === null} onClick={answer}>
           Responder
         </button>
       </div>
       {result && result.correct && (
-        <div className="console">
-          <p className="verdict ok">🎉 ¡Correcto!</p>
+        <div className="console" aria-live="polite">
+          <Verdict ok>Correcto.</Verdict>
           <p>{result.explanation}</p>
         </div>
       )}
       {result && !result.correct && (
-        <div className="console">
-          <p className="verdict bad">❌ No es esa. Repasa la teoría e inténtalo de nuevo.</p>
+        <div className="console" aria-live="polite">
+          <Verdict>No es esa. Repasa la teoría e inténtalo de nuevo.</Verdict>
           {!explain && (
-            <button className="btn ghost small" onClick={() => setExplain(true)}>
-              Ver explicación
-            </button>
+            <div>
+              <button className="btn ghost small" onClick={() => setExplain(true)}>
+                Ver explicación
+              </button>
+            </div>
           )}
           {explain && <p>{result.explanation}</p>}
         </div>
@@ -285,7 +308,7 @@ function ChecklistExercise({ exercise, onSubmit, solved }) {
   }
 
   return (
-    <div className="checklist">
+    <div className="checklist stack">
       <ul>
         {exercise.items.map((item, index) => (
           <li key={index}>
@@ -300,9 +323,15 @@ function ChecklistExercise({ exercise, onSubmit, solved }) {
           </li>
         ))}
       </ul>
-      <div className="row actions">
+      <div className="actions">
         <button className="btn primary" disabled={!done || busy || solved} onClick={complete}>
-          {solved ? "✓ Completado" : "Marcar como completado"}
+          {solved ? (
+            <>
+              <Check size={16} aria-hidden="true" /> Completado
+            </>
+          ) : (
+            "Marcar como completado"
+          )}
         </button>
         {!done && <span className="muted small">Marca todos los puntos para completarlo.</span>}
       </div>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { api } from "../api.js";
+import BrandMark from "../components/BrandMark.jsx";
 
 export default function Login({ onSuccess }) {
   const [password, setPassword] = useState("");
@@ -22,17 +23,13 @@ export default function Login({ onSuccess }) {
 
   return (
     <div className="login-wrap">
-      <form className="card login" onSubmit={submit}>
-        <div className="brand login-brand">
-          <span className="brand-mark" aria-hidden="true">
-            <i /> <i /> <i />
-          </span>
+      <form className="login" onSubmit={submit}>
+        <div className="brand">
+          <BrandMark />
           DataPath
         </div>
-        <p className="muted">Introduce tu contraseña para continuar.</p>
-        <label htmlFor="password" className="small muted">
-          Contraseña
-        </label>
+        <p className="muted">Tu cuaderno de estudio. Introduce la contraseña para abrirlo.</p>
+        <label htmlFor="password">Contraseña</label>
         <input
           id="password"
           type="password"
@@ -41,7 +38,11 @@ export default function Login({ onSuccess }) {
           onChange={(event) => setPassword(event.target.value)}
           autoFocus
         />
-        {error && <p className="login-error">{error}</p>}
+        {error && (
+          <p className="login-error" role="alert">
+            {error}
+          </p>
+        )}
         <button className="btn primary" type="submit" disabled={busy || !password}>
           {busy ? "Entrando…" : "Entrar"}
         </button>

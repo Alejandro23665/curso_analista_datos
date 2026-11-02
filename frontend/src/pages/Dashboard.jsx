@@ -1,29 +1,59 @@
 import { Link } from "react-router-dom";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { ArrowRight, TrendingDown, TrendingUp } from "lucide-react";
 import { api } from "../api.js";
-import ProgressRing from "../components/ProgressRing.jsx";
+import Squares, { SquaresLegend, topicSquare } from "../components/Squares.jsx";
 import { useAsync } from "../hooks.js";
-import { formatDate, LEVELS, percent } from "../util.js";
+import { useTrack } from "../track.jsx";
+import { formatDate, percent } from "../util.js";
 
-function Stat({ icon, value, label }) {
+function Tracks({ tracks, current, onSelect }) {
   return (
-    <div className="card stat">
-      <span className="stat-icon">{icon}</span>
-      <strong>{value}</strong>
-      <span className="muted">{label}</span>
-    </div>
+    <section className="module">
+      <div className="module-head">
+        <h2>Tus rutas</h2>
+        <p className="muted small">Los temas compartidos cuentan en todas las rutas que los incluyen.</p>
+      </div>
+      <div className="track-list">
+        {tracks.map((t) => (
+          <article key={t.slug} className={"track-item" + (t.slug === current ? " current" : "")}>
+            <div className="row between">
+              <h3>{t.title}</h3>
+              <strong className="num">{t.percent}%</strong>
+            </div>
+            <p className="muted small">{t.description}</p>
+            <div className="meter">
+              <span style={{ width: t.percent + "%" }} />
+            </div>
+            <div className="row between">
+              <span className="muted small num">
+                {t.topics_completed}/{t.topics_total} temas · {t.total_hours} h
+              </span>
+              {t.slug === current ? (
+                <span className="tag ok">Ruta actual</span>
+              ) : (
+                <button className="btn small" onClick={() => onSelect(t.slug)}>
+                  Seguir esta ruta
+                </button>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
   );
 }
 
 export default function Dashboard() {
-  const progress = useAsync(() => api.progress(), []);
+  const { track, setTrack } = useTrack();
+  const progress = useAsync(() => api.progress(track), [track]);
   const stats = useAsync(() => api.stats(), []);
 
-  if (progress.loading && !progress.data) return <div className="page muted">Cargando tu progreso…</div>;
+  if (progress.loading && !progress.data) return <div className="loading">Cargando tu progreso…</div>;
   if (progress.error)
     return (
-      <div className="page">
-        <div className="card center">
+      <div className="page narrow">
+        <div className="empty">
           <h2>No se pudo conectar con el servidor</h2>
           <p className="muted">{progress.error.message}</p>
           <p className="muted small">Comprueba que el backend (FastAPI) y PostgreSQL estén en marcha.</p>
@@ -37,89 +67,127 @@ export default function Dashboard() {
   const p = progress.data;
   const s = stats.data;
   const next = p.next_topic;
+  const nextSlug = next && next.slug;
 
   return (
     <div className="page">
-      <section className="hero card">
-        <div className="hero-text">
-          <p className="eyebrow">Tu ruta a ingeniero de datos</p>
-          {next ? (
-            <>
-              <h1>Sigue donde lo dejaste</h1>
-              <p className="muted">
-                {next.phase} · <strong>{next.title}</strong>
-              </p>
-              <p>{next.summary}</p>
-              <div className="row">
-                <Link className="btn primary" to={"/tema/" + next.slug}>
-                  {next.percent > 0 ? "Continuar" : "Empezar"} →
-                </Link>
-                <Link className="btn ghost" to="/ruta">
-                  Ver toda la ruta
-                </Link>
-              </div>
-            </>
-          ) : (
-            <>
-              <h1>¡Completaste toda la ruta! 🎉</h1>
-              <p>Ahora toca lo más importante: publicar tus proyectos y empezar a postular.</p>
-            </>
-          )}
+      <section className="next-block">
+        {next ? (
+          <div>
+            <h1>
+              Sigue con <span className="hl">{next.title}</span>
+            </h1>
+            <p className="lede">{next.summary}</p>
+            <p className="meta">
+              <span>{next.phase}</span>
+              <span className="num">
+                {next.solved}/{next.total} ejercicios
+              </span>
+              <span className="num">{next.percent}% hecho</span>
+            </p>
+          </div>
+        ) : (
+          <div>
+            <h1>
+              Completaste <span className="hl green">toda la ruta</span>
+            </h1>
+            <p className="lede">Ahora toca lo más importante: publicar tus proyectos y empezar a postular.</p>
+          </div>
+        )}
+        {next && (
+          <div className="actions">
+            <Link className="btn primary" to={"/tema/" + next.slug}>
+              {next.percent > 0 ? "Continuar" : "Empezar"} <ArrowRight size={16} aria-hidden="true" />
+            </Link>
+            <Link className="btn" to="/ruta">
+              Ver toda la ruta
+            </Link>
+          </div>
+        )}
+      </section>
+
+      <section className="module">
+        <div className="module-head">
+          <h2>{p.track.title}, cuadro a cuadro</h2>
+          <SquaresLegend />
         </div>
-        <ProgressRing value={p.overall_percent} label="de la ruta" />
-      </section>
-
-      <section className="stat-grid">
-        <Stat icon="🔥" value={p.streak + (p.streak === 1 ? " día" : " días")} label="racha de estudio" />
-        <Stat icon="📚" value={p.topics_completed + " / " + p.topics_total} label="temas completados" />
-        <Stat
-          icon="🧩"
-          value={s ? s.totals.exercises_solved + " / " + s.totals.exercises_total : "—"}
-          label="ejercicios resueltos"
-        />
-        <Stat icon="🎯" value={s ? percent(s.totals.accuracy) : "—"} label="precisión en intentos" />
-        <Stat
-          icon="🗓️"
-          value={p.remaining_hours + " h"}
-          label={p.days_left ? "restantes · fin ≈ " + formatDate(p.eta_date) : "restantes"}
-        />
-      </section>
-      <p className="muted small note">
-        Estimación basada en {p.hours_per_day} h de estudio al día, todos los días.
-      </p>
-
-      <div className="grid-2">
-        <section className="card">
-          <h3>Progreso por fase</h3>
-          <ul className="phase-list">
+        <div className="route-sheet">
+          <div className="route-summary">
+            <div className="figure-wrap">
+              <span className="figure">
+                {p.overall_percent}
+                <small>%</small>
+              </span>
+              <span>de la ruta</span>
+            </div>
+            <div className="figure-wrap">
+              <span className="figure">
+                {p.topics_completed}
+                <small>/{p.topics_total}</small>
+              </span>
+              <span>temas completados</span>
+            </div>
+            <div className="figure-wrap">
+              <span className="figure">
+                {p.remaining_hours}
+                <small>h</small>
+              </span>
+              <span>{p.days_left ? "restantes · fin ≈ " + formatDate(p.eta_date) : "restantes"}</span>
+            </div>
+          </div>
+          <div className="route-lines">
             {p.phases.map((phase) => (
-              <li key={phase.slug}>
-                <div className="row between">
-                  <span>{phase.title}</span>
-                  <strong>{phase.percent}%</strong>
-                </div>
-                <div className="bar">
-                  <span style={{ width: phase.percent + "%" }} />
-                </div>
-              </li>
+              <div key={phase.slug} className="route-line">
+                <Squares label={phase.title} items={phase.topics.map((t) => topicSquare(t, nextSlug))} />
+                <span className="name" title={phase.title}>
+                  {phase.title}
+                </span>
+                <span className="pct">{phase.percent}%</span>
+              </div>
             ))}
-          </ul>
-        </section>
+          </div>
+        </div>
+        <p className="muted small">Estimación con {p.hours_per_day} h de estudio al día, todos los días. Cada cuadro es un tema: tócalo para abrirlo.</p>
+      </section>
 
-        <section className="card">
-          <h3>Actividad (últimos 28 días)</h3>
+      <dl className="ledger">
+        <div>
+          <dt>Racha de estudio</dt>
+          <dd>
+            {p.streak} {p.streak === 1 ? "día" : "días"}
+          </dd>
+        </div>
+        <div>
+          <dt>Ejercicios resueltos</dt>
+          <dd>{s ? s.totals.exercises_solved + " / " + s.totals.exercises_total : "—"}</dd>
+        </div>
+        <div>
+          <dt>Precisión en intentos</dt>
+          <dd>
+            {s ? percent(s.totals.accuracy) : "—"}
+            {s && <small>{s.totals.attempts} intentos</small>}
+          </dd>
+        </div>
+      </dl>
+
+      {p.tracks.length > 1 && <Tracks tracks={p.tracks} current={p.track.slug} onSelect={setTrack} />}
+
+      <div className="cols">
+        <section className="module">
+          <h2>Actividad, últimos 28 días</h2>
           {s ? (
             <div className="chart">
-              <ResponsiveContainer width="100%" height={210}>
-                <BarChart data={s.activity.map((d) => ({ dia: d.date.slice(5), acciones: d.count }))}>
-                  <CartesianGrid stroke="var(--line)" vertical={false} />
-                  <XAxis dataKey="dia" tick={{ fill: "var(--muted)", fontSize: 11 }} interval={3} />
-                  <YAxis allowDecimals={false} tick={{ fill: "var(--muted)", fontSize: 11 }} width={28} />
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={s.activity.map((d) => ({ dia: d.date.slice(5), acciones: d.count }))} margin={{ left: -8, right: 4 }}>
+                  <CartesianGrid stroke="var(--grid)" vertical={false} />
+                  <XAxis dataKey="dia" tick={{ fill: "var(--ink-soft)", fontSize: 11 }} interval={3} tickLine={false} axisLine={{ stroke: "var(--rule)" }} />
+                  <YAxis allowDecimals={false} tick={{ fill: "var(--ink-soft)", fontSize: 11 }} width={32} tickLine={false} axisLine={false} />
                   <Tooltip
-                    cursor={{ fill: "rgba(20,35,58,.06)" }}
-                    contentStyle={{ background: "var(--panel)", border: "1px solid var(--line)", borderRadius: 8 }}
+                    cursor={{ fill: "rgba(29, 63, 176, .06)" }}
+                    contentStyle={{ background: "#fff", border: "1px solid var(--rule)", borderRadius: 6, fontSize: 13 }}
+                    formatter={(value) => [value, "acciones"]}
                   />
-                  <Bar dataKey="acciones" fill="var(--green)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="acciones" fill="var(--blue)" radius={[2, 2, 0, 0]} maxBarSize={18} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -127,26 +195,28 @@ export default function Dashboard() {
             <p className="muted">Cargando…</p>
           )}
         </section>
-      </div>
 
-      {s && (
-        <section className="card">
-          <div className="row between">
-            <h3>Tus fortalezas y debilidades</h3>
-            <Link to="/habilidades" className="link">
-              Ver detalle →
+        <section className="module">
+          <div className="module-head">
+            <h2>Fortalezas y debilidades</h2>
+            <Link to="/habilidades" className="link-arrow">
+              Ver detalle <ArrowRight size={14} aria-hidden="true" />
             </Link>
           </div>
-          {s.totals.attempts === 0 ? (
+          {!s ? (
+            <p className="muted">Cargando…</p>
+          ) : s.totals.attempts === 0 ? (
             <p className="muted">
               Aún no hay datos. Resuelve unos cuantos ejercicios y aquí aparecerá qué se te da mejor y qué debes reforzar.
             </p>
           ) : (
-            <div className="grid-2">
+            <div className="skill-lists">
               <div>
-                <h4 style={{ color: LEVELS.fuerte.color }}>💪 Fortalezas</h4>
+                <h3>
+                  <TrendingUp size={18} color="var(--ok)" aria-hidden="true" /> Fortalezas
+                </h3>
                 {s.strengths.length ? (
-                  <ul className="mini-list">
+                  <ul className="ruled">
                     {s.strengths.slice(0, 4).map((k) => (
                       <li key={k.skill}>
                         <span>{k.skill}</span> <strong>{percent(k.accuracy)}</strong>
@@ -154,13 +224,15 @@ export default function Dashboard() {
                     ))}
                   </ul>
                 ) : (
-                  <p className="muted small">Todavía ninguna (necesitas al menos 3 intentos por habilidad).</p>
+                  <p className="muted small">Todavía ninguna: hacen falta al menos 3 intentos por habilidad.</p>
                 )}
               </div>
               <div>
-                <h4 style={{ color: LEVELS.debil.color }}>🎯 A reforzar</h4>
+                <h3>
+                  <TrendingDown size={18} color="var(--bad)" aria-hidden="true" /> A reforzar
+                </h3>
                 {s.weaknesses.length ? (
-                  <ul className="mini-list">
+                  <ul className="ruled">
                     {s.weaknesses.slice(0, 4).map((k) => (
                       <li key={k.skill}>
                         <span>{k.skill}</span> <strong>{percent(k.accuracy)}</strong>
@@ -168,13 +240,13 @@ export default function Dashboard() {
                     ))}
                   </ul>
                 ) : (
-                  <p className="muted small">¡Nada urgente por ahora!</p>
+                  <p className="muted small">Nada urgente por ahora.</p>
                 )}
               </div>
             </div>
           )}
         </section>
-      )}
+      </div>
     </div>
   );
 }

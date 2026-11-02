@@ -6,12 +6,17 @@ El panel de inicio y la página *Fortalezas y debilidades* se calculan con tus i
 
 ## Qué incluye
 
-- **35 temas en 8 fases**: fundamentos y Python para datos, SQL, análisis con pandas y trabajo con asistentes de IA, estadística aplicada, BI (Excel y Power BI), ingeniería de datos, ML/IA aplicada y búsqueda de empleo (~372 h; unas 18 semanas a 3 h/día).
-- **3 proyectos de portafolio**: análisis exploratorio, pipeline de datos y dashboard publicado.
-- **200 ejercicios**: SQL (se ejecutan contra un PostgreSQL de práctica), Python/pandas/matplotlib (se ejecutan **en tu navegador** con Pyodide), quizzes y listas de verificación de proyectos.
-- **Progreso** por tema, fase y global, racha de estudio y fecha estimada de finalización.
+- **3 rutas de aprendizaje** con secciones propias (por defecto solo se muestra la de producto; ver `ACTIVE_TRACKS`):
+  - 🛠️ **Ingeniero de datos** (28 temas, ~304 h): Python, SQL, bases de datos, pipelines, calidad, cloud e IA.
+  - 🚀 **Ingeniero de producto y startups** (29 temas, ~282 h): Python profesional, APIs, seguridad, LLMs por dentro, RAG, agentes y MCP, evaluación y seguridad de IA, desarrollo con agentes de código, arquitectura (incluida la distribuida), diseño de sistemas, producción y validación de startups.
+  - 📊 **Analista de datos** (28 temas, ~276 h): SQL, pandas, estadística, Excel, Power BI y comunicación.
+- **Progreso compartido:** el progreso se guarda por tema, así que un tema que está en varias rutas (Python, SQL, Docker, IA asistida...) cuenta en todas al completarlo. En el mapa de cada ruta se marcan con 🔗.
+- **49 temas y 283 ejercicios**: SQL (contra un PostgreSQL de práctica), Python (en tu navegador con Pyodide), quizzes y listas de verificación de proyectos.
+- **Proyectos de portafolio:** análisis exploratorio, pipeline de datos, dashboard publicado y un MVP en producción.
+- **Progreso** por ruta, sección y tema, racha de estudio y fecha estimada de finalización.
 - **Fortalezas y debilidades** por habilidad (≥ 3 intentos: ≥ 75 % fortaleza, < 50 % a reforzar) y plan de repaso sugerido.
 - **Apuntes** por tema con guardado automático y vista previa Markdown.
+- **Para profundizar:** videos, documentación y libros recomendados al final de la teoría de cada tema (`backend/app/content/recursos.py`).
 
 ## Arrancar con Docker (lo más sencillo)
 
@@ -62,6 +67,7 @@ Abre **http://localhost:5173** (Vite envía `/api` al backend en el puerto 8000)
 | `APP_TZ` | `America/Caracas` | Zona horaria de la racha de estudio |
 | `CORS_ORIGINS` | `http://localhost:5173` | Orígenes permitidos (separados por comas) |
 | `APP_PASSWORD` | *(vacía)* | Contraseña de acceso; si está vacía no se pide (solo para uso local) |
+| `ACTIVE_TRACKS` | `producto` | Rutas visibles, separadas por comas (`producto,ingeniero-datos,analista`). Las ocultas conservan su contenido y tu progreso |
 
 ## Cómo funciona la práctica
 
@@ -75,7 +81,7 @@ Para Excel y Power BI puedes descargar los datos de la tienda en `/api/sandbox/c
 
 ## Mantener y ampliar el contenido
 
-Todo el currículo vive en `backend/app/content/fase_*.py` (teoría en Markdown + ejercicios). Para añadir un tema, copia uno existente dentro de `TOPICS`, dale un `slug` único y ejecuta:
+Todo el currículo vive en `backend/app/content/fase_*.py` (teoría en Markdown + ejercicios) y las rutas en `backend/app/content/tracks.py`. Para añadir un tema, copia uno existente dentro de `TOPICS`, dale un `slug` único, añádelo a las secciones de las rutas que quieras en `tracks.py` y ejecuta:
 
 ```powershell
 cd backend

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Check, Copy } from "lucide-react";
 import { languageLabel, normalizeLanguage, tokenize } from "../highlight.js";
 
 // Bloque de código de la teoría: fondo oscuro, colores por tipo de elemento y botón para copiar.
@@ -27,7 +28,8 @@ export default function CodeBlock({ code, lang }) {
       <figcaption>
         <span className={"lang lang-" + language}>{languageLabel(language)}</span>
         <button type="button" onClick={copy} aria-label="Copiar código">
-          {copied ? "✓ Copiado" : "Copiar"}
+          {copied ? <Check size={13} aria-hidden="true" /> : <Copy size={13} aria-hidden="true" />}
+          {copied ? "Copiado" : "Copiar"}
         </button>
       </figcaption>
       <pre>

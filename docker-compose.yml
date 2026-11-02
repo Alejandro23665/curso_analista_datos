@@ -23,6 +23,7 @@ services:
       STUDY_HOURS_PER_DAY: ${STUDY_HOURS_PER_DAY:-3}
       APP_TZ: ${APP_TZ:-America/Caracas}
       APP_PASSWORD: ${APP_PASSWORD:-}
+      ACTIVE_TRACKS: ${ACTIVE_TRACKS:-producto}
       CORS_ORIGINS: http://localhost:5173,http://localhost:8080
     depends_on:
       db:

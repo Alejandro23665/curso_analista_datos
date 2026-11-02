@@ -1,3 +1,4 @@
+import { Database } from "lucide-react";
 import { api } from "../api.js";
 import { useAsync } from "../hooks.js";
 
@@ -5,8 +6,10 @@ import { useAsync } from "../hooks.js";
 export default function SchemaPanel() {
   const { data, loading, error } = useAsync(() => api.schema(), []);
   return (
-    <aside className="card schema">
-      <h4>🗄️ Tablas de práctica</h4>
+    <aside className="schema">
+      <h2>
+        <Database size={16} aria-hidden="true" /> Tablas de práctica
+      </h2>
       {loading && <p className="muted small">Cargando tablas…</p>}
       {error && <p className="muted small">No se pudieron cargar las tablas: {error.message}</p>}
       {data &&
@@ -16,7 +19,7 @@ export default function SchemaPanel() {
             <ul>
               {table.columns.map((column) => (
                 <li key={column.name}>
-                  <code>{column.name}</code> <span className="muted small">{column.type}</span>
+                  <code>{column.name}</code> <span className="muted">{column.type}</span>
                 </li>
               ))}
             </ul>

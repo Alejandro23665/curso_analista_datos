@@ -1,0 +1,719 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-02T21:32:37+00:00",
+  "title": "Design System: DataPath",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Papel frío",
+        "canonical": "#fafbfd",
+        "tonalRamp": [
+          "oklch(15.0% 0.000 264.5)",
+          "oklch(26.4% 0.001 264.5)",
+          "oklch(37.9% 0.002 264.5)",
+          "oklch(49.3% 0.002 264.5)",
+          "oklch(60.7% 0.003 264.5)",
+          "oklch(72.1% 0.002 264.5)",
+          "oklch(83.6% 0.002 264.5)",
+          "oklch(95.0% 0.001 264.5)"
+        ]
+      },
+      "paper-2": {
+        "role": "neutral",
+        "displayName": "Papel de panel",
+        "canonical": "#f2f5fa",
+        "tonalRamp": [
+          "oklch(15.0% 0.001 260.7)",
+          "oklch(26.4% 0.002 260.7)",
+          "oklch(37.9% 0.004 260.7)",
+          "oklch(49.3% 0.006 260.7)",
+          "oklch(60.7% 0.007 260.7)",
+          "oklch(72.1% 0.006 260.7)",
+          "oklch(83.6% 0.004 260.7)",
+          "oklch(95.0% 0.002 260.7)"
+        ]
+      },
+      "paper-3": {
+        "role": "neutral",
+        "displayName": "Papel de etiqueta",
+        "canonical": "#e9eef6",
+        "tonalRamp": [
+          "oklch(15.0% 0.002 259.8)",
+          "oklch(26.4% 0.004 259.8)",
+          "oklch(37.9% 0.007 259.8)",
+          "oklch(49.3% 0.009 259.8)",
+          "oklch(60.7% 0.012 259.8)",
+          "oklch(72.1% 0.009 259.8)",
+          "oklch(83.6% 0.006 259.8)",
+          "oklch(95.0% 0.004 259.8)"
+        ]
+      },
+      "sheet": {
+        "role": "neutral",
+        "displayName": "Hoja blanca",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15.0% 0.000 89.9)",
+          "oklch(26.4% 0.000 89.9)",
+          "oklch(37.9% 0.000 89.9)",
+          "oklch(49.3% 0.000 89.9)",
+          "oklch(60.7% 0.000 89.9)",
+          "oklch(72.1% 0.000 89.9)",
+          "oklch(83.6% 0.000 89.9)",
+          "oklch(95.0% 0.000 89.9)"
+        ]
+      },
+      "grid": {
+        "role": "neutral",
+        "displayName": "Cuadrícula",
+        "canonical": "#dce4f2",
+        "tonalRamp": [
+          "oklch(15.0% 0.003 261.8)",
+          "oklch(26.4% 0.007 261.8)",
+          "oklch(37.9% 0.012 261.8)",
+          "oklch(49.3% 0.016 261.8)",
+          "oklch(60.7% 0.021 261.8)",
+          "oklch(72.1% 0.016 261.8)",
+          "oklch(83.6% 0.011 261.8)",
+          "oklch(95.0% 0.006 261.8)"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Regla fina",
+        "canonical": "#d3dbe8",
+        "tonalRamp": [
+          "oklch(15.0% 0.003 260.2)",
+          "oklch(26.4% 0.007 260.2)",
+          "oklch(37.9% 0.011 260.2)",
+          "oklch(49.3% 0.016 260.2)",
+          "oklch(60.7% 0.020 260.2)",
+          "oklch(72.1% 0.015 260.2)",
+          "oklch(83.6% 0.010 260.2)",
+          "oklch(95.0% 0.006 260.2)"
+        ]
+      },
+      "rule-strong": {
+        "role": "neutral",
+        "displayName": "Regla marcada",
+        "canonical": "#b9c4d6",
+        "tonalRamp": [
+          "oklch(15.0% 0.004 260.3)",
+          "oklch(26.4% 0.009 260.3)",
+          "oklch(37.9% 0.016 260.3)",
+          "oklch(49.3% 0.022 260.3)",
+          "oklch(60.7% 0.028 260.3)",
+          "oklch(72.1% 0.021 260.3)",
+          "oklch(83.6% 0.015 260.3)",
+          "oklch(95.0% 0.008 260.3)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Tinta",
+        "canonical": "#15203a",
+        "tonalRamp": [
+          "oklch(15.0% 0.008 265.5)",
+          "oklch(26.4% 0.017 265.5)",
+          "oklch(37.9% 0.029 265.5)",
+          "oklch(49.3% 0.041 265.5)",
+          "oklch(60.7% 0.051 265.5)",
+          "oklch(72.1% 0.039 265.5)",
+          "oklch(83.6% 0.028 265.5)",
+          "oklch(95.0% 0.016 265.5)"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Tinta suave",
+        "canonical": "#4a5874",
+        "tonalRamp": [
+          "oklch(15.0% 0.007 263.9)",
+          "oklch(26.4% 0.016 263.9)",
+          "oklch(37.9% 0.027 263.9)",
+          "oklch(49.3% 0.039 263.9)",
+          "oklch(60.7% 0.048 263.9)",
+          "oklch(72.1% 0.037 263.9)",
+          "oklch(83.6% 0.026 263.9)",
+          "oklch(95.0% 0.015 263.9)"
+        ]
+      },
+      "blue": {
+        "role": "primary",
+        "displayName": "Tinta Bic",
+        "canonical": "#1d3fb0",
+        "tonalRamp": [
+          "oklch(15.0% 0.028 265.6)",
+          "oklch(26.4% 0.060 265.6)",
+          "oklch(37.9% 0.102 265.6)",
+          "oklch(49.3% 0.144 265.6)",
+          "oklch(60.7% 0.181 265.6)",
+          "oklch(72.1% 0.139 265.6)",
+          "oklch(83.6% 0.097 265.6)",
+          "oklch(95.0% 0.055 265.6)"
+        ]
+      },
+      "blue-hover": {
+        "role": "primary",
+        "displayName": "Tinta Bic apretada",
+        "canonical": "#16318d",
+        "tonalRamp": [
+          "oklch(15.0% 0.023 265.8)",
+          "oklch(26.4% 0.051 265.8)",
+          "oklch(37.9% 0.087 265.8)",
+          "oklch(49.3% 0.122 265.8)",
+          "oklch(60.7% 0.153 265.8)",
+          "oklch(72.1% 0.118 265.8)",
+          "oklch(83.6% 0.082 265.8)",
+          "oklch(95.0% 0.047 265.8)"
+        ]
+      },
+      "blue-wash": {
+        "role": "primary",
+        "displayName": "Lavado de tinta",
+        "canonical": "#e7ecfb",
+        "tonalRamp": [
+          "oklch(15.0% 0.003 271.2)",
+          "oklch(26.4% 0.007 271.2)",
+          "oklch(37.9% 0.012 271.2)",
+          "oklch(49.3% 0.016 271.2)",
+          "oklch(60.7% 0.021 271.2)",
+          "oklch(72.1% 0.016 271.2)",
+          "oklch(83.6% 0.011 271.2)",
+          "oklch(95.0% 0.006 271.2)"
+        ]
+      },
+      "cover": {
+        "role": "secondary",
+        "displayName": "Tapa del cuaderno",
+        "canonical": "#12204a",
+        "tonalRamp": [
+          "oklch(15.0% 0.012 266.8)",
+          "oklch(26.4% 0.026 266.8)",
+          "oklch(37.9% 0.045 266.8)",
+          "oklch(49.3% 0.063 266.8)",
+          "oklch(60.7% 0.079 266.8)",
+          "oklch(72.1% 0.061 266.8)",
+          "oklch(83.6% 0.042 266.8)",
+          "oklch(95.0% 0.024 266.8)"
+        ]
+      },
+      "cover-2": {
+        "role": "secondary",
+        "displayName": "Relieve de la tapa",
+        "canonical": "#1c2d63",
+        "tonalRamp": [
+          "oklch(15.0% 0.015 267.4)",
+          "oklch(26.4% 0.032 267.4)",
+          "oklch(37.9% 0.055 267.4)",
+          "oklch(49.3% 0.077 267.4)",
+          "oklch(60.7% 0.097 267.4)",
+          "oklch(72.1% 0.074 267.4)",
+          "oklch(83.6% 0.052 267.4)",
+          "oklch(95.0% 0.029 267.4)"
+        ]
+      },
+      "cover-ink": {
+        "role": "secondary",
+        "displayName": "Texto sobre la tapa",
+        "canonical": "#eef1fb",
+        "tonalRamp": [
+          "oklch(15.0% 0.002 272.7)",
+          "oklch(26.4% 0.005 272.7)",
+          "oklch(37.9% 0.008 272.7)",
+          "oklch(49.3% 0.011 272.7)",
+          "oklch(60.7% 0.014 272.7)",
+          "oklch(72.1% 0.010 272.7)",
+          "oklch(83.6% 0.007 272.7)",
+          "oklch(95.0% 0.004 272.7)"
+        ]
+      },
+      "cover-muted": {
+        "role": "secondary",
+        "displayName": "Texto tenue sobre la tapa",
+        "canonical": "#aab6d9",
+        "tonalRamp": [
+          "oklch(15.0% 0.008 270.3)",
+          "oklch(26.4% 0.017 270.3)",
+          "oklch(37.9% 0.029 270.3)",
+          "oklch(49.3% 0.041 270.3)",
+          "oklch(60.7% 0.051 270.3)",
+          "oklch(72.1% 0.039 270.3)",
+          "oklch(83.6% 0.027 270.3)",
+          "oklch(95.0% 0.016 270.3)"
+        ]
+      },
+      "margin": {
+        "role": "tertiary",
+        "displayName": "Margen rojo",
+        "canonical": "#cf2f3b",
+        "tonalRamp": [
+          "oklch(15.0% 0.029 22.7)",
+          "oklch(26.4% 0.064 22.7)",
+          "oklch(37.9% 0.109 22.7)",
+          "oklch(49.3% 0.153 22.7)",
+          "oklch(60.7% 0.192 22.7)",
+          "oklch(72.1% 0.148 22.7)",
+          "oklch(83.6% 0.103 22.7)",
+          "oklch(95.0% 0.059 22.7)"
+        ]
+      },
+      "margin-wash": {
+        "role": "tertiary",
+        "displayName": "Lavado de margen",
+        "canonical": "#fde9ea",
+        "tonalRamp": [
+          "oklch(15.0% 0.003 14.1)",
+          "oklch(26.4% 0.007 14.1)",
+          "oklch(37.9% 0.012 14.1)",
+          "oklch(49.3% 0.017 14.1)",
+          "oklch(60.7% 0.022 14.1)",
+          "oklch(72.1% 0.017 14.1)",
+          "oklch(83.6% 0.012 14.1)",
+          "oklch(95.0% 0.007 14.1)"
+        ]
+      },
+      "hl": {
+        "role": "tertiary",
+        "displayName": "Resaltador amarillo",
+        "canonical": "#fff176",
+        "tonalRamp": [
+          "oklch(15.0% 0.022 102.8)",
+          "oklch(26.4% 0.047 102.8)",
+          "oklch(37.9% 0.080 102.8)",
+          "oklch(49.3% 0.113 102.8)",
+          "oklch(60.7% 0.142 102.8)",
+          "oklch(72.1% 0.109 102.8)",
+          "oklch(83.6% 0.076 102.8)",
+          "oklch(95.0% 0.043 102.8)"
+        ]
+      },
+      "hl-strong": {
+        "role": "tertiary",
+        "displayName": "Resaltador intenso",
+        "canonical": "#ffe94a",
+        "tonalRamp": [
+          "oklch(15.0% 0.026 101.2)",
+          "oklch(26.4% 0.056 101.2)",
+          "oklch(37.9% 0.095 101.2)",
+          "oklch(49.3% 0.134 101.2)",
+          "oklch(60.7% 0.168 101.2)",
+          "oklch(72.1% 0.129 101.2)",
+          "oklch(83.6% 0.090 101.2)",
+          "oklch(95.0% 0.051 101.2)"
+        ]
+      },
+      "hl-green": {
+        "role": "tertiary",
+        "displayName": "Resaltador verde",
+        "canonical": "#bdf0a4",
+        "tonalRamp": [
+          "oklch(15.0% 0.017 135.7)",
+          "oklch(26.4% 0.037 135.7)",
+          "oklch(37.9% 0.063 135.7)",
+          "oklch(49.3% 0.089 135.7)",
+          "oklch(60.7% 0.112 135.7)",
+          "oklch(72.1% 0.086 135.7)",
+          "oklch(83.6% 0.060 135.7)",
+          "oklch(95.0% 0.034 135.7)"
+        ]
+      },
+      "hl-wash": {
+        "role": "tertiary",
+        "displayName": "Papel amarillento",
+        "canonical": "#fffbe0",
+        "tonalRamp": [
+          "oklch(15.0% 0.005 100.1)",
+          "oklch(26.4% 0.012 100.1)",
+          "oklch(37.9% 0.020 100.1)",
+          "oklch(49.3% 0.028 100.1)",
+          "oklch(60.7% 0.035 100.1)",
+          "oklch(72.1% 0.027 100.1)",
+          "oklch(83.6% 0.019 100.1)",
+          "oklch(95.0% 0.011 100.1)"
+        ]
+      },
+      "hl-wash-rule": {
+        "role": "tertiary",
+        "displayName": "Borde amarillento",
+        "canonical": "#f0de6a",
+        "tonalRamp": [
+          "oklch(15.0% 0.021 100.6)",
+          "oklch(26.4% 0.045 100.6)",
+          "oklch(37.9% 0.077 100.6)",
+          "oklch(49.3% 0.108 100.6)",
+          "oklch(60.7% 0.136 100.6)",
+          "oklch(72.1% 0.104 100.6)",
+          "oklch(83.6% 0.073 100.6)",
+          "oklch(95.0% 0.041 100.6)"
+        ]
+      },
+      "ok": {
+        "role": "neutral",
+        "displayName": "Correcto",
+        "canonical": "#1f7a37",
+        "tonalRamp": [
+          "oklch(15.0% 0.020 148.0)",
+          "oklch(26.4% 0.043 148.0)",
+          "oklch(37.9% 0.073 148.0)",
+          "oklch(49.3% 0.104 148.0)",
+          "oklch(60.7% 0.130 148.0)",
+          "oklch(72.1% 0.100 148.0)",
+          "oklch(83.6% 0.070 148.0)",
+          "oklch(95.0% 0.040 148.0)"
+        ]
+      },
+      "warn": {
+        "role": "neutral",
+        "displayName": "Aviso",
+        "canonical": "#9a5b00",
+        "tonalRamp": [
+          "oklch(15.0% 0.018 65.1)",
+          "oklch(26.4% 0.039 65.1)",
+          "oklch(37.9% 0.066 65.1)",
+          "oklch(49.3% 0.094 65.1)",
+          "oklch(60.7% 0.117 65.1)",
+          "oklch(72.1% 0.090 65.1)",
+          "oklch(83.6% 0.063 65.1)",
+          "oklch(95.0% 0.036 65.1)"
+        ]
+      },
+      "warn-wash": {
+        "role": "neutral",
+        "displayName": "Lavado de aviso",
+        "canonical": "#fff3dc",
+        "tonalRamp": [
+          "oklch(15.0% 0.005 83.7)",
+          "oklch(26.4% 0.011 83.7)",
+          "oklch(37.9% 0.018 83.7)",
+          "oklch(49.3% 0.026 83.7)",
+          "oklch(60.7% 0.032 83.7)",
+          "oklch(72.1% 0.025 83.7)",
+          "oklch(83.6% 0.017 83.7)",
+          "oklch(95.0% 0.010 83.7)"
+        ]
+      },
+      "bad": {
+        "role": "neutral",
+        "displayName": "Bolígrafo rojo",
+        "canonical": "#c22a35",
+        "tonalRamp": [
+          "oklch(15.0% 0.028 23.0)",
+          "oklch(26.4% 0.062 23.0)",
+          "oklch(37.9% 0.104 23.0)",
+          "oklch(49.3% 0.147 23.0)",
+          "oklch(60.7% 0.185 23.0)",
+          "oklch(72.1% 0.142 23.0)",
+          "oklch(83.6% 0.099 23.0)",
+          "oklch(95.0% 0.056 23.0)"
+        ]
+      },
+      "muted-cell": {
+        "role": "neutral",
+        "displayName": "Celda pendiente",
+        "canonical": "#c5cfe0",
+        "tonalRamp": [
+          "oklch(15.0% 0.004 261.1)",
+          "oklch(26.4% 0.009 261.1)",
+          "oklch(37.9% 0.015 261.1)",
+          "oklch(49.3% 0.020 261.1)",
+          "oklch(60.7% 0.026 261.1)",
+          "oklch(72.1% 0.020 261.1)",
+          "oklch(83.6% 0.014 261.1)",
+          "oklch(95.0% 0.008 261.1)"
+        ]
+      },
+      "code-bg": {
+        "role": "neutral",
+        "displayName": "Página pasada a limpio",
+        "canonical": "#111a33",
+        "tonalRamp": [
+          "oklch(15.0% 0.008 267.3)",
+          "oklch(26.4% 0.017 267.3)",
+          "oklch(37.9% 0.028 267.3)",
+          "oklch(49.3% 0.040 267.3)",
+          "oklch(60.7% 0.050 267.3)",
+          "oklch(72.1% 0.038 267.3)",
+          "oklch(83.6% 0.027 267.3)",
+          "oklch(95.0% 0.015 267.3)"
+        ]
+      },
+      "code-bar": {
+        "role": "neutral",
+        "displayName": "Cabecera de código",
+        "canonical": "#0c1429",
+        "tonalRamp": [
+          "oklch(15.0% 0.007 266.7)",
+          "oklch(26.4% 0.014 266.7)",
+          "oklch(37.9% 0.025 266.7)",
+          "oklch(49.3% 0.035 266.7)",
+          "oklch(60.7% 0.043 266.7)",
+          "oklch(72.1% 0.033 266.7)",
+          "oklch(83.6% 0.023 266.7)",
+          "oklch(95.0% 0.013 266.7)"
+        ]
+      },
+      "code-rule": {
+        "role": "neutral",
+        "displayName": "Regla de código",
+        "canonical": "#1d2a4f",
+        "tonalRamp": [
+          "oklch(15.0% 0.010 267.5)",
+          "oklch(26.4% 0.023 267.5)",
+          "oklch(37.9% 0.039 267.5)",
+          "oklch(49.3% 0.055 267.5)",
+          "oklch(60.7% 0.069 267.5)",
+          "oklch(72.1% 0.053 267.5)",
+          "oklch(83.6% 0.037 267.5)",
+          "oklch(95.0% 0.021 267.5)"
+        ]
+      },
+      "code-text": {
+        "role": "neutral",
+        "displayName": "Texto de código",
+        "canonical": "#e7ecf7",
+        "tonalRamp": [
+          "oklch(15.0% 0.002 266.3)",
+          "oklch(26.4% 0.005 266.3)",
+          "oklch(37.9% 0.009 266.3)",
+          "oklch(49.3% 0.012 266.3)",
+          "oklch(60.7% 0.016 266.3)",
+          "oklch(72.1% 0.012 266.3)",
+          "oklch(83.6% 0.008 266.3)",
+          "oklch(95.0% 0.005 266.3)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Título de cada página y del siguiente tema en el panel."
+      },
+      "figure": {
+        "displayName": "Cifra",
+        "purpose": "Porcentajes, racha y horas con números tabulares."
+      },
+      "headline": {
+        "displayName": "Titular",
+        "purpose": "Títulos de módulo y de ejercicio."
+      },
+      "title": {
+        "displayName": "Título",
+        "purpose": "Subtítulos de lista y de bloque."
+      },
+      "body": {
+        "displayName": "Cuerpo",
+        "purpose": "Interfaz general."
+      },
+      "reading": {
+        "displayName": "Lectura",
+        "purpose": "Teoría en Markdown dentro de la hoja con margen rojo, máx. 64ch."
+      },
+      "label": {
+        "displayName": "Etiqueta",
+        "purpose": "Etiquetas del libro de cuentas, cabeceras de tabla y campos."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "Código, editor, esquema SQL y apuntes."
+      }
+    },
+    "shadows": [
+      {
+        "name": "cover-label",
+        "value": "0 18px 40px rgba(0, 0, 0, .35)",
+        "purpose": "Solo la tarjeta de acceso sobre la tapa azul."
+      },
+      {
+        "name": "field-focus",
+        "value": "0 0 0 3px var(--blue-wash)",
+        "purpose": "Halo de foco de campos, selectores y apuntes."
+      },
+      {
+        "name": "selected-ring",
+        "value": "inset 0 0 0 1px var(--blue)",
+        "purpose": "Ruta actual y editor enfocado."
+      },
+      {
+        "name": "recording-pulse",
+        "value": "0 0 0 5px rgba(207, 47, 59, .22)",
+        "purpose": "Pulso del botón mientras se graba la voz en inglés."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "Barrido del resaltador, relleno de barras y crecimiento de cuadritos."
+      },
+      {
+        "name": "hl-sweep",
+        "value": "0.9s ease-out 0.15s, una vez",
+        "purpose": "El único gesto con autor: el resaltador barre sobre lo siguiente."
+      },
+      {
+        "name": "state-fast",
+        "value": "0.12s-0.15s",
+        "purpose": "Transiciones de color, borde y fondo en hover."
+      },
+      {
+        "name": "meter-fill",
+        "value": "width 0.6s ease-out",
+        "purpose": "Relleno de la barra de progreso fina."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide",
+        "value": "1080px"
+      },
+      {
+        "name": "rail-to-topbar",
+        "value": "900px"
+      },
+      {
+        "name": "phone",
+        "value": "560px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botón principal",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Acción principal en tinta Bic: continuar, comprobar, entrar.",
+      "html": "<button class=\"ds-btn-primary\">Continuar <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:0 16px;border-radius:var(--radius,6px);font:600 .93rem/1 var(--font-body, 'Inter Variable', Inter, 'Segoe UI', system-ui, sans-serif);cursor:pointer;text-decoration:none;transition:background .15s,border-color .15s,color .15s,transform .1s;background:var(--blue,#1d3fb0);border:1px solid var(--blue,#1d3fb0);color:#fff;}.ds-btn-primary:hover{background:var(--blue-hover,#16318d);border-color:var(--blue-hover,#16318d);}.ds-btn-primary:active{transform:translateY(1px);}.ds-btn-primary:focus-visible{outline:2px solid var(--blue,#1d3fb0);outline-offset:2px;}"
+    },
+    {
+      "name": "Botón secundario",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Hoja blanca con borde marcado para acciones secundarias.",
+      "html": "<button class=\"ds-btn\">Ver pista</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:0 16px;border-radius:var(--radius,6px);font:600 .93rem/1 var(--font-body, 'Inter Variable', Inter, 'Segoe UI', system-ui, sans-serif);cursor:pointer;text-decoration:none;transition:background .15s,border-color .15s,color .15s,transform .1s;background:#fff;border:1px solid var(--rule-strong,#b9c4d6);color:var(--ink,#15203a);}.ds-btn:hover{border-color:var(--ink-soft,#4a5874);}.ds-btn:active{transform:translateY(1px);}.ds-btn:focus-visible{outline:2px solid var(--blue,#1d3fb0);outline-offset:2px;}"
+    },
+    {
+      "name": "Botón fantasma",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Acción terciaria escrita en tinta, sin caja hasta el hover.",
+      "html": "<button class=\"ds-btn-ghost\">Reiniciar código</button>",
+      "css": ".ds-btn-ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:0 16px;border-radius:var(--radius,6px);font:600 .93rem/1 var(--font-body, 'Inter Variable', Inter, 'Segoe UI', system-ui, sans-serif);cursor:pointer;text-decoration:none;transition:background .15s,border-color .15s,color .15s,transform .1s;background:transparent;border:1px solid transparent;color:var(--blue,#1d3fb0);}.ds-btn-ghost:hover{background:var(--blue-wash,#e7ecfb);color:var(--blue-hover,#16318d);}.ds-btn-ghost:focus-visible{outline:2px solid var(--blue,#1d3fb0);outline-offset:2px;}"
+    },
+    {
+      "name": "Etiquetas",
+      "kind": "chip",
+      "refersTo": "tag",
+      "description": "Etiquetas de papel; amarillo = siguiente, verde = resuelto, tinta = nivel.",
+      "html": "<span class=\"ds-tags\"><span class=\"ds-tag\">Python</span><span class=\"ds-tag ds-next\">Siguiente</span><span class=\"ds-tag ds-ok\">Resuelto</span><span class=\"ds-tag ds-level\">A1</span></span>",
+      "css": ".ds-tags{display:inline-flex;gap:6px;flex-wrap:wrap;}.ds-tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;background:var(--paper-3,#e9eef6);color:var(--ink,#15203a);font:600 .8rem/1.5 var(--font-body, 'Inter Variable', Inter, 'Segoe UI', system-ui, sans-serif);white-space:nowrap;}.ds-tag.ds-next{background:var(--hl,#fff176);}.ds-tag.ds-ok{background:var(--hl-green,#bdf0a4);color:#13461f;}.ds-tag.ds-level{background:var(--blue,#1d3fb0);color:#fff;font-family:var(--font-display, 'Bricolage Grotesque Variable', 'Bricolage Grotesque', 'Segoe UI', sans-serif);letter-spacing:.02em;}"
+    },
+    {
+      "name": "Campo de texto",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Campo en hoja blanca; al enfocar, borde de tinta con halo lavado.",
+      "html": "<label class=\"ds-field\"><span>Tu respuesta</span><input class=\"ds-input\" placeholder=\"Escribe aquí\"></label>",
+      "css": ".ds-field{display:flex;flex-direction:column;gap:6px;font:600 .86rem var(--font-body, 'Inter Variable', Inter, 'Segoe UI', system-ui, sans-serif);color:var(--ink,#15203a);}.ds-input{font:400 15.5px var(--font-body, 'Inter Variable', Inter, 'Segoe UI', system-ui, sans-serif);min-height:40px;padding:0 12px;border-radius:var(--radius,6px);border:1px solid var(--rule-strong,#b9c4d6);background:#fff;color:var(--ink,#15203a);}.ds-input:focus{outline:none;border-color:var(--blue,#1d3fb0);box-shadow:0 0 0 3px var(--blue-wash,#e7ecfb);}"
+    },
+    {
+      "name": "Barra lateral (tapa)",
+      "kind": "nav",
+      "refersTo": "rail",
+      "description": "La tapa azul tinta con marca, navegación y la nota Siguiente al pie.",
+      "html": "<nav class=\"ds-rail\"><a class=\"ds-brand\" href=\"#\"><span class=\"ds-mark\"><i></i><i></i><i></i><i></i></span>DataPath</a><a class=\"ds-nav ds-active\" href=\"#\">Panel</a><a class=\"ds-nav\" href=\"#\">Ruta</a><a class=\"ds-nav\" href=\"#\">Habilidades</a><a class=\"ds-note\" href=\"#\"><span>Siguiente</span><strong><mark>Diccionarios en Python</mark></strong></a></nav>",
+      "css": ".ds-rail{display:flex;flex-direction:column;gap:4px;width:248px;padding:24px 16px 16px;background:var(--cover,#12204a);font-family:var(--font-body, 'Inter Variable', Inter, 'Segoe UI', system-ui, sans-serif);}.ds-brand{display:flex;align-items:center;gap:12px;color:var(--cover-ink,#eef1fb);text-decoration:none;font:750 1.2rem/1 var(--font-display, 'Bricolage Grotesque Variable', 'Bricolage Grotesque', 'Segoe UI', sans-serif);letter-spacing:-.02em;padding:0 8px 20px;}.ds-mark{display:grid;grid-template-columns:repeat(2,11px);gap:2px;}.ds-mark i{width:11px;height:11px;border:1.5px solid var(--cover-muted,#aab6d9);border-radius:2px;box-sizing:border-box;}.ds-mark i:nth-child(1){background:var(--cover-ink,#eef1fb);border-color:var(--cover-ink,#eef1fb);}.ds-mark i:nth-child(4){background:var(--hl,#fff176);border-color:var(--hl,#fff176);}.ds-nav{padding:9px 12px;border-radius:6px;color:var(--cover-muted,#aab6d9);text-decoration:none;font-weight:600;font-size:.95rem;transition:background .15s,color .15s;}.ds-nav:hover{background:var(--cover-2,#1c2d63);color:var(--cover-ink,#eef1fb);}.ds-nav.ds-active{background:var(--cover-ink,#eef1fb);color:var(--cover,#12204a);}.ds-nav:focus-visible,.ds-note:focus-visible{outline:2px solid var(--blue,#1d3fb0);outline-offset:2px;}.ds-note{margin-top:24px;display:block;padding:12px;border:1px solid var(--cover-2,#1c2d63);border-radius:6px;color:var(--cover-ink,#eef1fb);text-decoration:none;}.ds-note:hover{border-color:var(--cover-muted,#aab6d9);}.ds-note span{display:block;color:var(--cover-muted,#aab6d9);font-size:.78rem;font-weight:600;margin-bottom:6px;}.ds-note strong{font-weight:650;line-height:1.35;}.ds-note mark{background:var(--hl,#fff176);color:var(--ink,#15203a);padding:0 .12em;}"
+    },
+    {
+      "name": "Cuadritos de progreso",
+      "kind": "custom",
+      "refersTo": "square-done",
+      "description": "Firma del sistema: un cuadrito por tema, con sus cinco estados.",
+      "html": "<span class=\"ds-squares\" role=\"list\" aria-label=\"Progreso de la ruta\"><a href=\"#\" class=\"ds-sq ds-done\" aria-label=\"Completado\"></a><a href=\"#\" class=\"ds-sq ds-done\" aria-label=\"Completado\"></a><a href=\"#\" class=\"ds-sq ds-doing\" aria-label=\"En curso\"></a><a href=\"#\" class=\"ds-sq ds-next\" aria-label=\"Siguiente\"></a><a href=\"#\" class=\"ds-sq ds-bad\" aria-label=\"Con errores\"></a><a href=\"#\" class=\"ds-sq\" aria-label=\"Pendiente\"></a><a href=\"#\" class=\"ds-sq\" aria-label=\"Pendiente\"></a></span>",
+      "css": ".ds-squares{display:flex;flex-wrap:wrap;gap:3px;}.ds-sq{width:18px;height:18px;box-sizing:border-box;border:1.5px solid var(--muted-cell,#c5cfe0);border-radius:3px;background:#fff;display:block;transition:transform .15s cubic-bezier(.16,1,.3,1),border-color .15s;}.ds-sq:hover{transform:scale(1.18);border-color:var(--blue,#1d3fb0);}.ds-sq:focus-visible{outline:2px solid var(--blue,#1d3fb0);outline-offset:2px;}.ds-sq.ds-done{background:var(--blue,#1d3fb0);border-color:var(--blue,#1d3fb0);}.ds-sq.ds-doing{background:linear-gradient(135deg,var(--blue,#1d3fb0) 0 50%,#fff 50%);border-color:var(--blue,#1d3fb0);}.ds-sq.ds-next{background:var(--hl-strong,#ffe94a);border-color:var(--ink,#15203a);}.ds-sq.ds-bad{border-color:var(--margin,#cf2f3b);}"
+    },
+    {
+      "name": "Resaltador",
+      "kind": "custom",
+      "refersTo": "tag-next",
+      "description": "El único gesto animado: el resaltador barre una vez sobre lo siguiente.",
+      "html": "<p class=\"ds-hl-line\">Siguiente tema: <span class=\"ds-hl\">Consultas con JOIN</span></p>",
+      "css": ".ds-hl-line{font:750 1.8rem/1.15 var(--font-display, 'Bricolage Grotesque Variable', 'Bricolage Grotesque', 'Segoe UI', sans-serif);letter-spacing:-.025em;color:var(--ink,#15203a);margin:0;}.ds-hl{background-image:linear-gradient(100deg,transparent 0 1%,var(--hl,#fff176) 2% 97%,transparent 99%);background-repeat:no-repeat;background-size:100% 78%;background-position:0 70%;padding:0 .12em;margin:0 -.06em;-webkit-box-decoration-break:clone;box-decoration-break:clone;animation:ds-hl-sweep .9s cubic-bezier(.16,1,.3,1) .15s both;}@keyframes ds-hl-sweep{from{background-size:0% 78%;}to{background-size:100% 78%;}}@media (prefers-reduced-motion:reduce){.ds-hl{animation:none;}}"
+    },
+    {
+      "name": "Módulo con regla de tinta",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Contenedor de página: regla superior de tinta y libro de cuentas, sin tarjeta.",
+      "html": "<section class=\"ds-module\"><h2>Tu avance</h2><dl class=\"ds-ledger\"><div><dt>Ruta</dt><dd>38%</dd></div><div><dt>Racha</dt><dd>6 días</dd></div><div><dt>Horas</dt><dd>41,5</dd></div></dl></section>",
+      "css": ".ds-module{border-top:1px solid var(--ink,#15203a);padding-top:16px;display:flex;flex-direction:column;gap:16px;font-family:var(--font-body, 'Inter Variable', Inter, 'Segoe UI', system-ui, sans-serif);color:var(--ink,#15203a);}.ds-module h2{margin:0;font:700 1.45rem/1.15 var(--font-display, 'Bricolage Grotesque Variable', 'Bricolage Grotesque', 'Segoe UI', sans-serif);letter-spacing:-.015em;}.ds-ledger{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin:0;padding:8px 0;border-top:1px solid var(--rule,#d3dbe8);border-bottom:1px solid var(--rule,#d3dbe8);}.ds-ledger div{display:flex;flex-direction:column;gap:2px;padding:8px 16px 8px 0;}.ds-ledger dt{color:var(--ink-soft,#4a5874);font-size:.84rem;}.ds-ledger dd{margin:0;font:650 1.35rem/1.25 var(--font-display, 'Bricolage Grotesque Variable', 'Bricolage Grotesque', 'Segoe UI', sans-serif);font-variant-numeric:tabular-nums;letter-spacing:-.01em;}"
+    },
+    {
+      "name": "Bloque de código",
+      "kind": "card",
+      "refersTo": "codeblock",
+      "description": "La página pasada a limpio en oscuro, con cuadrito de lenguaje y copiar.",
+      "html": "<figure class=\"ds-code\"><figcaption><span class=\"ds-lang\">python</span><button>Copiar</button></figcaption><pre><code><span class=\"k\">def</span> <span class=\"f\">saludar</span>(nombre):\n    <span class=\"k\">return</span> <span class=\"s\">\"Hola, \"</span> + nombre  <span class=\"c\"># texto</span></code></pre></figure>",
+      "css": ".ds-code{margin:0;border-radius:6px;overflow:hidden;background:#111a33;border:1px solid #1d2a4f;}.ds-code figcaption{display:flex;align-items:center;justify-content:space-between;padding:6px 6px 6px 16px;background:#0c1429;border-bottom:1px solid #1d2a4f;}.ds-lang{font:600 .74rem var(--font-mono, 'JetBrains Mono Variable', 'JetBrains Mono', Consolas, monospace);letter-spacing:.04em;color:#9fb0d4;display:inline-flex;align-items:center;gap:8px;}.ds-lang::before{content:'';width:8px;height:8px;border-radius:2px;background:#ffd43b;}.ds-code button{background:transparent;border:1px solid #2a3a68;color:#c9d4ee;border-radius:4px;padding:4px 10px;font:600 .76rem var(--font-body, 'Inter Variable', Inter, 'Segoe UI', system-ui, sans-serif);cursor:pointer;}.ds-code button:hover{background:#1b2850;color:#fff;}.ds-code button:focus-visible{outline:2px solid var(--blue,#1d3fb0);outline-offset:2px;}.ds-code pre{margin:0;padding:16px;}.ds-code code{display:block;color:#e7ecf7;font:.9rem/1.7 var(--font-mono, 'JetBrains Mono Variable', 'JetBrains Mono', Consolas, monospace);white-space:pre-wrap;}.ds-code .k{color:#ff9ec7;}.ds-code .s{color:#b3e89f;}.ds-code .f{color:#86c8ff;}.ds-code .c{color:#8797bb;font-style:italic;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "El cuaderno cuadriculado",
+    "overview": "**Creative North Star: \"El cuaderno cuadriculado\"**\n\nDataPath es el cuaderno del propio alumno. El fondo es papel blanco frío, la barra lateral es la tapa azul tinta del cuaderno, las acciones y los enlaces están escritos con bolígrafo Bic azul, las hojas de lectura llevan el margen rojo doble y lo que toca después está pasado con resaltador amarillo. El avance se cuenta en cuadritos: cada tema es una celda que se rellena a bolígrafo, se rellena a medias mientras está en curso o se resalta cuando es el siguiente.\n\nLa densidad es de cuaderno de estudio, no de panel de SaaS: módulos separados por una regla fina de tinta en lugar de tarjetas con sombra, cifras grandes con números tabulares, filas de temas con el mismo mobiliario fijo (cuadrito de estado, título, horas, porcentaje). Nada es decorativo: cada color tiene un significado de cuaderno (tinta, resaltador, margen, bolígrafo rojo) y se usa solo para ese significado. El papel cuadriculado de 24 px aparece únicamente donde se cuenta el avance.\n\nSe rechaza explícitamente el panel gris genérico con anillos de progreso verdes y tarjetas de estadística del mismo tamaño.",
+    "keyCharacteristics": [
+      "Papel blanco frío (`paper`) con tapa azul tinta (`cover`) a la izquierda.",
+      "Progreso dibujado como cuadritos del cuaderno, no como anillos ni barras gruesas.",
+      "Resaltador amarillo para \"siguiente / actual\", verde para \"resuelto\", rojo de bolígrafo para errores.",
+      "Módulos con regla superior de tinta; bordes finos; sin sombras en la página.",
+      "Bricolage Grotesque para títulos y cifras, Inter para lectura, JetBrains Mono para código.",
+      "Una sola animación con autor: el barrido del resaltador."
+    ],
+    "rules": [
+      {
+        "name": "The Highlighter Rule",
+        "body": "El amarillo significa \"siguiente\" o \"actual\" y nada más. Si algo está resaltado y no es lo que toca, sobra el resaltador.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink Means Done Rule",
+        "body": "Un cuadrito relleno de `blue` es trabajo hecho; medio relleno en diagonal, en curso; resaltado, el siguiente; vacío, pendiente; borde rojo, con errores. Estos cinco estados son el vocabulario completo del progreso.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Numbers Rule",
+        "body": "Toda cifra que mide avance (porcentajes, horas, aciertos, columnas de tabla) usa números tabulares para que las columnas se lean como un libro de cuentas.",
+        "section": "typography"
+      },
+      {
+        "name": "The Scale Contrast Rule",
+        "body": "La jerarquía sale del contraste de tamaño entre display y cuerpo, no de mayúsculas ni de color.",
+        "section": "typography"
+      },
+      {
+        "name": "The Hairline Module Rule",
+        "body": "Un módulo empieza con una regla de tinta de 1 px y 16 px de aire; no se envuelve en una tarjeta con sombra.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** dibujar el avance con cuadritos y sus cinco estados (vacío, en curso, completado, siguiente, con errores).",
+      "**Do** reservar el resaltador amarillo (`hl`, `hl-strong`, `hl-wash`) para lo siguiente o lo actual, y el verde (`hl-green`) para lo resuelto.",
+      "**Do** separar módulos con una regla superior de 1 px `ink` y 16 px de aire.",
+      "**Do** derivar todo espaciado del cuadro de 24 px (4, 8, 12, 16, 24, 36, 48, 72).",
+      "**Do** usar números tabulares en toda cifra de avance y Bricolage Grotesque para las cifras grandes.",
+      "**Do** poner la teoría en la hoja con margen rojo doble, a 1.01rem/1.7 y máx. 64ch.",
+      "**Do** limitar el papel cuadriculado (`grid`, celda de 24 px) a las superficies donde se cuenta el avance.",
+      "**Do** respetar `prefers-reduced-motion`: el barrido y las transiciones se anulan."
+    ],
+    "donts": [
+      "**Don't** usar anillos de progreso, tarjetas de estadística del mismo tamaño ni el gris genérico de panel SaaS.",
+      "**Don't** poner sombras en superficies de la página; la única elevación es la etiqueta de acceso sobre la tapa.",
+      "**Don't** usar el amarillo, el verde o el rojo como decoración: cada uno tiene un significado de cuaderno.",
+      "**Don't** añadir una segunda animación con autor; el barrido del resaltador es el único gesto.",
+      "**Don't** cubrir de cuadrícula las hojas de lectura ni los formularios."
+    ]
+  }
+}

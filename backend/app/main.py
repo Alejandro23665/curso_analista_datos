@@ -20,6 +20,7 @@ from starlette.concurrency import run_in_threadpool
 from . import auth, content, sandbox
 from .config import APP_TZ, CORS_ORIGINS, DATABASE_URL_SOURCE, HOURS_PER_DAY, ON_VERCEL
 from .db import Base, engine, get_db
+from .english_api import router as english_router
 from .models import Activity, Attempt, Note, TopicProgress
 
 log = logging.getLogger("datapath")
@@ -64,6 +65,7 @@ app = FastAPI(title="DataPath API", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware, allow_origins=CORS_ORIGINS, allow_credentials=True, allow_methods=["*"], allow_headers=["*"],
 )
+app.include_router(english_router)
 
 def _db_error_message(exc: Exception) -> str:
     """Explica por qué falló la base, sin mostrar contraseñas (los errores de psycopg no las incluyen)."""
@@ -238,6 +240,7 @@ def logout(response: Response):
 @app.get("/api/curriculum")
 def curriculum():
     return {
+        "tracks": content.visible_tracks(),
         "phases": [
             dict(phase, topics=[content.topic_meta(t) for t in content.TOPICS if t["phase"] == phase["slug"]])
             for phase in content.PHASES
@@ -246,7 +249,7 @@ def curriculum():
 
 
 @app.get("/api/topics/{slug}")
-def get_topic(slug: str, db: Session = Depends(get_db)):
+def get_topic(slug: str, track: str | None = None, db: Session = Depends(get_db)):
     topic = content.get_topic(slug)
     if not topic:
         raise HTTPException(404, "Tema no encontrado")
@@ -256,7 +259,13 @@ def get_topic(slug: str, db: Session = Depends(get_db)):
             select(Attempt.exercise_id).where(Attempt.topic_slug == slug, Attempt.correct.is_(True)).distinct()
         )
     }
-    order = [t["slug"] for t in content.TOPICS]
+    belongs = content.tracks_with_topic(slug)
+    chosen = content.get_track(track)
+    if slug not in content.track_topic_slugs(chosen) and belongs:
+        chosen = content.get_track(belongs[0]["slug"])
+    order = content.track_topic_slugs(chosen)
+    if slug not in order:
+        order = [t["slug"] for t in content.TOPICS]
     i = order.index(slug)
     return {
         **content.topic_meta(topic),
@@ -267,6 +276,8 @@ def get_topic(slug: str, db: Session = Depends(get_db)):
         "progress": _topic_states(db)[slug],
         "prev": order[i - 1] if i > 0 else None,
         "next": order[i + 1] if i + 1 < len(order) else None,
+        "track": {"slug": chosen["slug"], "title": chosen["title"]},
+        "tracks": belongs,
     }
 
 
@@ -392,45 +403,71 @@ def submit(exercise_id: str, body: SubmitBody, db: Session = Depends(get_db)):
     return {"correct": correct, **result, "progress": _topic_states(db)[exercise["topic"]]}
 
 
-@app.get("/api/progress")
-def progress(db: Session = Depends(get_db)):
-    states = _topic_states(db)
-    today = datetime.now(TZ).date()
-
-    phases, total_hours, remaining, next_topic = [], 0.0, 0.0, None
-    overall_acc = []
-    for phase in content.PHASES:
+def _track_summary(track: dict, states: dict) -> dict:
+    """Progreso de una ruta: secciones, horas, porcentaje y siguiente tema pendiente."""
+    sections, total_hours, remaining, weighted, next_topic = [], 0.0, 0.0, 0.0, None
+    for index, section in enumerate(track["sections"], start=1):
         topics = []
-        for topic in (t for t in content.TOPICS if t["phase"] == phase["slug"]):
-            st = states[topic["slug"]]
+        for slug in section["topics"]:
+            topic = content.get_topic(slug)
+            st = states[slug]
             total_hours += topic["hours"]
             remaining += topic["hours"] * (1 - st["percent"] / 100)
-            overall_acc.append(st["percent"] * topic["hours"])
-            entry = {"slug": topic["slug"], "title": topic["title"], "hours": topic["hours"], **st}
-            topics.append(entry)
+            weighted += st["percent"] * topic["hours"]
+            shared = [t["slug"] for t in content.tracks_with_topic(slug) if t["slug"] != track["slug"]]
+            topics.append({"slug": slug, "title": topic["title"], "hours": topic["hours"], "shared_with": shared, **st})
             if next_topic is None and st["status"] != "completado":
-                next_topic = {"slug": topic["slug"], "title": topic["title"], "summary": topic["summary"],
-                              "phase": phase["title"], **st}
+                next_topic = {"slug": slug, "title": topic["title"], "summary": topic["summary"],
+                              "phase": section["title"], **st}
         weight = sum(t["hours"] for t in topics) or 1
-        phases.append({
-            "slug": phase["slug"], "title": phase["title"], "description": phase["description"],
-            "percent": round(sum(t["percent"] * t["hours"] for t in topics) / weight), "topics": topics,
+        sections.append({
+            "slug": "%s-%d" % (track["slug"], index),
+            "title": "%d · %s" % (index, section["title"]),
+            "description": section.get("description", ""),
+            "percent": round(sum(t["percent"] * t["hours"] for t in topics) / weight),
+            "topics": topics,
         })
+    all_topics = [t for sec in sections for t in sec["topics"]]
+    return {
+        "slug": track["slug"], "title": track["title"], "icon": track["icon"], "description": track["description"],
+        "sections": sections,
+        "total_hours": total_hours,
+        "remaining_hours": remaining,
+        "percent": round(weighted / total_hours) if total_hours else 0,
+        "topics_completed": sum(1 for t in all_topics if t["status"] == "completado"),
+        "topics_total": len(all_topics),
+        "next_topic": next_topic,
+    }
+
+
+@app.get("/api/progress")
+def progress(track: str | None = None, db: Session = Depends(get_db)):
+    states = _topic_states(db)
+    today = datetime.now(TZ).date()
+    summaries = {t["slug"]: _track_summary(t, states) for t in content.visible_tracks()}
+    current = summaries[content.get_track(track)["slug"]]
 
     counts = _activity_counts(db)
+    remaining = current["remaining_hours"]
     days_left = math.ceil(remaining / HOURS_PER_DAY) if HOURS_PER_DAY > 0 else None
     return {
+        "track": {k: current[k] for k in ("slug", "title", "icon", "description")},
+        "tracks": [
+            {k: s[k] for k in ("slug", "title", "icon", "description", "percent", "topics_completed", "topics_total")}
+            | {"total_hours": round(s["total_hours"])}
+            for s in summaries.values()
+        ],
         "hours_per_day": HOURS_PER_DAY,
-        "overall_percent": round(sum(overall_acc) / total_hours) if total_hours else 0,
-        "total_hours": round(total_hours),
+        "overall_percent": current["percent"],
+        "total_hours": round(current["total_hours"]),
         "remaining_hours": round(remaining),
         "days_left": days_left,
         "eta_date": (today + timedelta(days=days_left)).isoformat() if days_left is not None else None,
         "streak": _streak(counts, today),
-        "topics_completed": sum(1 for s in states.values() if s["status"] == "completado"),
-        "topics_total": len(states),
-        "phases": phases,
-        "next_topic": next_topic,
+        "topics_completed": current["topics_completed"],
+        "topics_total": current["topics_total"],
+        "phases": current["sections"],
+        "next_topic": current["next_topic"],
     }
 
 
@@ -439,8 +476,11 @@ def stats(db: Session = Depends(get_db)):
     states = _topic_states(db)
     today = datetime.now(TZ).date()
 
+    visibles = content.visible_topic_slugs()
     topics_by_skill = defaultdict(list)
     for topic in content.TOPICS:
+        if topic["slug"] not in visibles:
+            continue
         for skill in content.skills_of(topic):
             topics_by_skill[skill].append({"slug": topic["slug"], "title": topic["title"]})
 
@@ -450,6 +490,7 @@ def stats(db: Session = Depends(get_db)):
             select(Attempt.skill, func.count(), func.sum(case((Attempt.correct.is_(True), 1), else_=0)))
             .group_by(Attempt.skill)
         )
+        if skill in topics_by_skill
     }
 
     skills = []
@@ -486,7 +527,7 @@ def stats(db: Session = Depends(get_db)):
             "attempts": total_attempts,
             "correct": total_correct,
             "accuracy": round(total_correct / total_attempts, 2) if total_attempts else None,
-            "exercises_solved": sum(s["solved"] for s in states.values()),
-            "exercises_total": sum(s["total"] for s in states.values()),
+            "exercises_solved": sum(s["solved"] for slug, s in states.items() if slug in visibles),
+            "exercises_total": sum(s["total"] for slug, s in states.items() if slug in visibles),
         },
     }

@@ -1,0 +1,148 @@
+"""Tarjetas de vocabulario para el repaso espaciado. (id, inglés, español, ejemplo, nivel)"""
+
+
+def _deck(focus, rows):
+    return [{"id": id, "en": en, "es": es, "example": example, "level": level, "focus": focus}
+            for id, en, es, example, level in rows]
+
+
+VOCAB = (
+    # --- A1: palabras muy frecuentes del trabajo ------------------------------------------------
+    _deck("entrevistas", [
+        ("v-a1-int-01", "job", "trabajo, empleo", "I'm looking for a job.", "A1"),
+        ("v-a1-int-02", "company", "empresa", "She works for a big company.", "A1"),
+        ("v-a1-int-03", "experience", "experiencia", "I have two years of experience.", "A1"),
+        ("v-a1-int-04", "skill", "habilidad", "Python is my best skill.", "A1"),
+        ("v-a1-int-05", "to learn", "aprender", "I want to learn new things.", "A1"),
+        ("v-a1-int-06", "to study", "estudiar", "I studied web development.", "A1"),
+        ("v-a1-int-07", "goal", "objetivo, meta", "My goal is to work remotely.", "A1"),
+        ("v-a1-int-08", "to be good at", "ser bueno en", "I'm good at solving problems.", "A1"),
+        ("v-a1-int-09", "to apply (for a job)", "postularse (a un empleo)", "I applied for a job yesterday.", "A1"),
+        ("v-a1-int-10", "salary", "salario", "The salary is good.", "A1"),
+    ])
+    + _deck("freelance", [
+        ("v-a1-fl-01", "client", "cliente", "My client needs a chatbot.", "A1"),
+        ("v-a1-fl-02", "price", "precio", "What is the price?", "A1"),
+        ("v-a1-fl-03", "to pay", "pagar", "The client pays every week.", "A1"),
+        ("v-a1-fl-04", "to send", "enviar", "Can you send me the file?", "A1"),
+        ("v-a1-fl-05", "file", "archivo", "I sent the file this morning.", "A1"),
+        ("v-a1-fl-06", "available", "disponible", "I'm available on Monday.", "A1"),
+        ("v-a1-fl-07", "to call", "llamar", "Can I call you tomorrow?", "A1"),
+        ("v-a1-fl-08", "website", "sitio web", "They need a new website.", "A1"),
+        ("v-a1-fl-09", "online store", "tienda en línea", "She has an online store.", "A1"),
+        ("v-a1-fl-10", "to need", "necesitar", "What do you need?", "A1"),
+    ])
+    + _deck("equipo", [
+        ("v-a1-team-01", "team", "equipo", "Our team has five people.", "A1"),
+        ("v-a1-team-02", "meeting", "reunión", "The meeting is at ten.", "A1"),
+        ("v-a1-team-03", "today", "hoy", "I'm working on the API today.", "A1"),
+        ("v-a1-team-04", "tomorrow", "mañana", "See you tomorrow.", "A1"),
+        ("v-a1-team-05", "yesterday", "ayer", "Yesterday I fixed a bug.", "A1"),
+        ("v-a1-team-06", "to help", "ayudar", "Can you help me, please?", "A1"),
+        ("v-a1-team-07", "busy", "ocupado", "Sorry, I'm busy right now.", "A1"),
+        ("v-a1-team-08", "question", "pregunta", "I have a question.", "A1"),
+        ("v-a1-team-09", "to understand", "entender", "I don't understand. Can you repeat that?", "A1"),
+        ("v-a1-team-10", "late", "tarde, con retraso", "Sorry, I'm late.", "A1"),
+    ])
+    + _deck("tecnico", [
+        ("v-a1-tech-01", "bug", "error (en el código)", "There is a bug in the login page.", "A1"),
+        ("v-a1-tech-02", "to fix", "arreglar", "I fixed the bug.", "A1"),
+        ("v-a1-tech-03", "to test", "probar", "Please test the new version.", "A1"),
+        ("v-a1-tech-04", "to save", "guardar", "Save the file before you close it.", "A1"),
+        ("v-a1-tech-05", "folder", "carpeta", "The images are in this folder.", "A1"),
+        ("v-a1-tech-06", "screen", "pantalla", "Can you share your screen?", "A1"),
+        ("v-a1-tech-07", "to update", "actualizar", "Update the app, please.", "A1"),
+        ("v-a1-tech-08", "password", "contraseña", "Never share your password.", "A1"),
+        ("v-a1-tech-09", "to download", "descargar", "Download the file from this link.", "A1"),
+        ("v-a1-tech-10", "error message", "mensaje de error", "What does the error message say?", "A1"),
+    ])
+    # --- A2 a B2 ------------------------------------------------------------------------------
+    + _deck("entrevistas", [
+        ("v-int-01", "to walk someone through", "explicarle algo a alguien paso a paso", "Could you walk me through your project?", "B1"),
+        ("v-int-02", "background", "formación, trayectoria", "Tell me a bit about your background.", "A2"),
+        ("v-int-03", "strength", "punto fuerte", "My main strength is learning quickly.", "A2"),
+        ("v-int-04", "weakness", "punto débil", "One weakness I'm working on is public speaking.", "A2"),
+        ("v-int-05", "challenge", "reto, desafío", "The main challenge was the blurry images.", "A2"),
+        ("v-int-06", "to be in charge of", "estar a cargo de", "I was in charge of the data extraction module.", "B1"),
+        ("v-int-07", "to take ownership", "hacerse responsable", "I took ownership of the deployment process.", "B2"),
+        ("v-int-08", "trade-off", "compromiso entre ventajas y desventajas", "Every design decision has a trade-off.", "B1"),
+        ("v-int-09", "to rephrase", "reformular", "Could you rephrase the question?", "B1"),
+        ("v-int-10", "hiring manager", "responsable de la contratación", "The hiring manager will join the second interview.", "B1"),
+        ("v-int-11", "take-home assignment", "prueba técnica para hacer en casa", "They sent me a take-home assignment.", "B1"),
+        ("v-int-12", "to reach out", "contactar", "Thanks for reaching out about the position.", "B1"),
+        ("v-int-13", "salary expectations", "expectativas salariales", "What are your salary expectations?", "B1"),
+        ("v-int-14", "to look forward to", "esperar con ganas", "I look forward to hearing from you.", "B1"),
+        ("v-int-15", "proud of", "orgulloso de", "I'm proud of the chatbot I built for a local store.", "A2"),
+        ("v-int-16", "to figure out", "averiguar, resolver", "I figured out why the tests were failing.", "B1"),
+        ("v-int-17", "feedback", "comentarios, retroalimentación", "I asked my teammates for feedback on my code.", "A2"),
+        ("v-int-18", "outcome", "resultado", "The outcome was a 30 percent faster response time.", "B2"),
+        ("v-int-19", "to collaborate", "colaborar", "I collaborated with a designer on the interface.", "A2"),
+        ("v-int-20", "to fit (a role)", "encajar (en un puesto)", "I think I'd be a good fit for this role.", "B1"),
+    ])
+    + _deck("freelance", [
+        ("v-fl-01", "budget", "presupuesto", "Would you mind sharing your budget?", "A2"),
+        ("v-fl-02", "quote", "cotización", "I'll send you a quote by tomorrow.", "A2"),
+        ("v-fl-03", "deadline", "fecha límite", "The deadline is the end of the month.", "A2"),
+        ("v-fl-04", "milestone", "hito (de pago o entrega)", "The project is split into three milestones.", "B1"),
+        ("v-fl-05", "scope", "alcance", "That feature is outside the current scope.", "B1"),
+        ("v-fl-06", "deliverable", "entregable", "The main deliverable is a working chatbot.", "B1"),
+        ("v-fl-07", "hourly rate", "tarifa por hora", "My hourly rate is 20 dollars.", "A2"),
+        ("v-fl-08", "fixed price", "precio cerrado", "I prefer a fixed price for this project.", "A2"),
+        ("v-fl-09", "invoice", "factura", "I'll send the invoice when the milestone is approved.", "A2"),
+        ("v-fl-10", "upfront", "por adelantado", "I ask for 30 percent upfront.", "B1"),
+        ("v-fl-11", "follow-up", "seguimiento", "I'm sending a quick follow-up on my proposal.", "B1"),
+        ("v-fl-12", "requirements", "requisitos", "Could you share the requirements in writing?", "A2"),
+        ("v-fl-13", "to hand over", "entregar, traspasar", "I'll hand over the code and the documentation.", "B1"),
+        ("v-fl-14", "maintenance", "mantenimiento", "I also offer monthly maintenance.", "A2"),
+        ("v-fl-15", "to negotiate", "negociar", "We negotiated a lower price for a smaller scope.", "B1"),
+        ("v-fl-16", "I'm afraid", "me temo que", "I'm afraid that won't be possible this week.", "B1"),
+        ("v-fl-17", "to push back (a date)", "retrasar (una fecha)", "We need to push back the launch by a week.", "B2"),
+        ("v-fl-18", "pain point", "problema principal del cliente", "Their main pain point is slow customer support.", "B2"),
+        ("v-fl-19", "turnaround time", "tiempo de entrega", "The turnaround time for small changes is two days.", "B2"),
+        ("v-fl-20", "to sign off", "dar el visto bueno final", "The client signed off on the final version.", "B2"),
+    ])
+    + _deck("equipo", [
+        ("v-team-01", "standup", "reunión diaria corta", "We have a standup every morning at nine.", "A2"),
+        ("v-team-02", "blocker", "bloqueo, impedimento", "Do you have any blockers?", "A2"),
+        ("v-team-03", "heads up", "aviso", "Heads up: the deployment is delayed.", "B1"),
+        ("v-team-04", "to look into", "investigar, revisar", "I'm looking into the error.", "B1"),
+        ("v-team-05", "to get back to someone", "responder más tarde a alguien", "I'll get back to you this afternoon.", "B1"),
+        ("v-team-06", "ETA", "hora o fecha estimada", "What's the ETA for the fix?", "B1"),
+        ("v-team-07", "to merge", "fusionar (código)", "I merged the pull request this morning.", "A2"),
+        ("v-team-08", "nit", "detalle menor (en revisión de código)", "Nit: this variable name could be clearer.", "B2"),
+        ("v-team-09", "good catch", "bien visto", "Good catch, I'll fix it.", "B1"),
+        ("v-team-10", "to sync", "reunirse brevemente para coordinarse", "Can we sync for ten minutes after lunch?", "B1"),
+        ("v-team-11", "on track", "según lo previsto", "The project is on track for Friday.", "B1"),
+        ("v-team-12", "behind schedule", "atrasado", "We're a bit behind schedule.", "B1"),
+        ("v-team-13", "to follow up", "hacer seguimiento", "I'll follow up with the client tomorrow.", "B1"),
+        ("v-team-14", "to pair (program)", "programar en pareja", "Let's pair on this bug.", "B2"),
+        ("v-team-15", "ticket", "tarea o incidencia (en Jira, Linear...)", "I created a ticket for the bug.", "A2"),
+        ("v-team-16", "to ship", "lanzar, publicar (una funcionalidad)", "We shipped the new search feature.", "B1"),
+        ("v-team-17", "to prioritize", "priorizar", "Let's prioritize the payment bug.", "A2"),
+        ("v-team-18", "out of office", "fuera de la oficina, ausente", "I'll be out of office on Monday.", "A2"),
+        ("v-team-19", "to escalate", "escalar (un problema a alguien con más autoridad)", "If it's not fixed today, we'll escalate it.", "B2"),
+        ("v-team-20", "async", "asíncrono (sin reunión)", "Let's discuss it async in the thread.", "B1"),
+    ])
+    + _deck("tecnico", [
+        ("v-tech-01", "to deploy", "desplegar", "We deploy to production every Friday.", "A2"),
+        ("v-tech-02", "to roll back", "revertir (un despliegue)", "We rolled back the last release.", "B1"),
+        ("v-tech-03", "root cause", "causa raíz", "The root cause was a missing variable.", "B1"),
+        ("v-tech-04", "deprecated", "obsoleto", "This function is deprecated.", "B1"),
+        ("v-tech-05", "default", "por defecto", "The default timeout is 30 seconds.", "A2"),
+        ("v-tech-06", "required", "obligatorio", "The API key is required.", "A2"),
+        ("v-tech-07", "to retrieve", "recuperar, obtener", "The system retrieves the most relevant documents.", "B1"),
+        ("v-tech-08", "chunk", "fragmento", "We split the text into chunks of 500 tokens.", "B1"),
+        ("v-tech-09", "latency", "latencia", "The latency is under two seconds.", "B1"),
+        ("v-tech-10", "throughput", "rendimiento (peticiones por segundo)", "We need higher throughput for the batch jobs.", "B2"),
+        ("v-tech-11", "edge case", "caso borde", "Did you test the edge case with an empty list?", "B1"),
+        ("v-tech-12", "bottleneck", "cuello de botella", "The database is the bottleneck.", "B1"),
+        ("v-tech-13", "to scale", "escalar", "This design won't scale to millions of users.", "B1"),
+        ("v-tech-14", "outage", "caída del servicio", "There was a two-hour outage last night.", "B2"),
+        ("v-tech-15", "accuracy", "precisión, exactitud", "The accuracy improved after adding citations.", "B1"),
+        ("v-tech-16", "hallucination", "alucinación (respuesta inventada)", "Citations help reduce hallucinations.", "B1"),
+        ("v-tech-17", "to support", "ser compatible con", "This library supports Python 3.12.", "B1"),
+        ("v-tech-18", "library", "biblioteca (de código)", "Which library do you use for testing?", "A2"),
+        ("v-tech-19", "to troubleshoot", "diagnosticar y resolver problemas", "I spent the morning troubleshooting the API.", "B2"),
+        ("v-tech-20", "backwards compatible", "compatible con versiones anteriores", "Adding an optional field is backwards compatible.", "B2"),
+    ])
+)
