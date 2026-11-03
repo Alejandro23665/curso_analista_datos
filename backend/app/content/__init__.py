@@ -1,5 +1,7 @@
 """Currículo: fases, temas, teoría y ejercicios. Todo el contenido vive en archivos Python/Markdown,
 así puedes editarlo o ampliarlo sin tocar la base de datos."""
+from pathlib import Path
+
 from . import (fase_bi, fase_carrera, fase_de, fase_empleo, fase_estadistica, fase_fundamentos, fase_ia_asistida, fase_ia_avanzada,
                fase_ml, fase_pandas, fase_producto, fase_python, fase_sql)
 from .recursos import RECURSOS, seccion_recursos
@@ -30,6 +32,17 @@ PHASES = [
 TOPICS = [t for module in (fase_fundamentos, fase_python, fase_sql, fase_pandas, fase_ia_asistida, fase_estadistica, fase_bi, fase_de, fase_ml, fase_producto,
                            fase_ia_avanzada, fase_carrera, fase_empleo)
           for t in module.TOPICS]
+
+# Capítulos largos: si existe content/teoria/<slug>.md, sustituye a la teoría corta del tema
+_TEORIA = Path(__file__).parent / "teoria"
+
+
+def _teoria(topic):
+    archivo = _TEORIA / (topic["slug"] + ".md")
+    return archivo.read_text(encoding="utf-8") if archivo.exists() else topic["theory"]
+
+
+TOPICS = [dict(t, theory=_teoria(t)) for t in TOPICS]
 
 # Añade la sección "Para profundizar" a los temas que tienen recursos recomendados
 TOPICS = [dict(t, theory=t["theory"].rstrip() + "\n" + seccion_recursos(t["slug"])) if t["slug"] in RECURSOS else t

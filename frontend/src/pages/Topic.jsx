@@ -6,6 +6,7 @@ import ExercisePanel from "../components/ExercisePanel.jsx";
 import Markdown from "../components/Markdown.jsx";
 import SchemaPanel from "../components/SchemaPanel.jsx";
 import Squares from "../components/Squares.jsx";
+import Toc from "../components/Toc.jsx";
 import { useAsync } from "../hooks.js";
 import { useTrack } from "../track.jsx";
 import { prewarm } from "../pyRunner.js";
@@ -86,6 +87,9 @@ export default function Topic() {
             <Clock size={14} aria-hidden="true" /> {topic.hours} h estimadas
           </span>
           <span>
+            <BookOpen size={14} aria-hidden="true" /> {Math.max(1, Math.round(topic.theory.split(/\s+/).length / 180))} min de lectura
+          </span>
+          <span>
             <ListChecks size={14} aria-hidden="true" /> {topic.exercise_count} ejercicios
           </span>
           {progress.theory_done && (
@@ -125,6 +129,8 @@ export default function Topic() {
       </nav>
 
       {tab === "teoria" && (
+        <div className="reading">
+        <Toc markdown={topic.theory} />
         <section className="sheet">
           <Markdown>{topic.theory}</Markdown>
           <div className="sheet-actions">
@@ -144,6 +150,7 @@ export default function Topic() {
             </button>
           </div>
         </section>
+        </div>
       )}
 
       {tab === "practica" && <Practice key={topic.slug} topic={topic} onSubmit={submitExercise} />}
