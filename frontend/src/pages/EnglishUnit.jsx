@@ -99,13 +99,17 @@ export default function EnglishUnit() {
           <Markdown>{unit.lesson}</Markdown>
           <div className="markdown">
             <h2>Frases clave</h2>
-            <p className="muted">Escúchalas y repítelas en voz alta hasta que te salgan sin leer.</p>
+            <p className="muted">
+              Escúchalas y repítelas en voz alta hasta que te salgan sin leer. Debajo de cada una tienes cómo suena, escrito con
+              letras del español: la tilde marca la sílaba fuerte.
+            </p>
           </div>
           <ul className="en-phrases">
             {unit.phrases.map((phrase) => (
               <li key={phrase.en}>
                 <div>
                   <strong lang="en">{phrase.en}</strong>
+                  {phrase.pron && <span className="en-pron">{phrase.pron}</span>}
                   <span className="muted small">{phrase.es}</span>
                 </div>
                 <AudioButtons text={phrase.en} compact />

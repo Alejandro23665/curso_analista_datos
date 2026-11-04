@@ -2,7 +2,10 @@
 
 Está separado del currículo principal: no pertenece a ninguna ruta ni cuenta en el panel de avance.
 """
+from pathlib import Path
+
 from . import unidades_basico, unidades_entrevistas, unidades_equipo, unidades_freelance, unidades_tecnico
+from .pronunciacion import PRON
 from .prueba import PLACEMENT
 from .vocabulario import VOCAB
 
@@ -28,6 +31,18 @@ UNITS = sorted(
     unidades_basico.UNITS + unidades_entrevistas.UNITS + unidades_freelance.UNITS + unidades_equipo.UNITS + unidades_tecnico.UNITS,
     key=lambda u: _LEVEL_INDEX[u["level"]],
 )
+
+# Las lecciones largas viven en lecciones/<slug>.md y sustituyen a la lección corta del diccionario de la unidad.
+_LECCIONES = Path(__file__).parent / "lecciones"
+
+
+def _leccion(unit):
+    archivo = _LECCIONES / (unit["slug"] + ".md")
+    return archivo.read_text(encoding="utf-8") if archivo.exists() else unit["lesson"]
+
+
+UNITS = [dict(u, lesson=_leccion(u)) for u in UNITS]
+VOCAB = [dict(c, pron=PRON.get(c["en"], "")) for c in VOCAB]
 
 _UNIT_BY_SLUG = {u["slug"]: u for u in UNITS}
 _EXERCISE_BY_ID = {ex["id"]: dict(ex, unit=u["slug"], focus=u["focus"]) for u in UNITS for ex in u["exercises"]}

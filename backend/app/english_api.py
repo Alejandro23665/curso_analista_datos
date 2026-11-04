@@ -158,7 +158,7 @@ def get_unit(slug: str, db: Session = Depends(get_db)):
         "slug": slug, "title": unit["title"], "summary": unit["summary"], "level": unit["level"], "minutes": unit["minutes"],
         "focus": unit["focus"], "focus_title": focus["title"], "icon": focus["icon"],
         "lesson": unit["lesson"],
-        "phrases": [{"en": en, "es": es} for en, es in unit["phrases"]],
+        "phrases": [{"en": en, "es": es, "pron": ingles.PRON.get(en, "")} for en, es in unit["phrases"]],
         "exercises": [ingles.public_exercise(ex) for ex in unit["exercises"]],
         "solved_ids": sorted(solved & {ex["id"] for ex in unit["exercises"]}),
         "progress": _unit_states(db)[slug],

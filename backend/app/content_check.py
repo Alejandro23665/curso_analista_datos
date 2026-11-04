@@ -150,6 +150,9 @@ def check_english():
             errors.append("%s: lección demasiado corta" % slug)
         if len(unit["phrases"]) < 4:
             errors.append("%s: pocas frases clave" % slug)
+        for en, _ in unit["phrases"]:
+            if not ingles.PRON.get(en):
+                errors.append("%s: falta la pronunciación de la frase %r" % (slug, en))
         for ex in unit["exercises"]:
             eid, kind = ex["id"], ex["kind"]
             counts[kind] = counts.get(kind, 0) + 1
@@ -179,6 +182,8 @@ def check_english():
         cards.add(card["id"])
         if card["level"] not in levels or card["focus"] not in ingles.FOCUS:
             errors.append("%s: nivel o enfoque desconocido" % card["id"])
+        if not card["pron"]:
+            errors.append("%s: falta la pronunciación" % card["id"])
     if len({c["en"].lower() for c in ingles.VOCAB}) != len(ingles.VOCAB):
         errors.append("vocabulario: hay expresiones en inglés repetidas")
 

@@ -499,6 +499,8 @@ mark.en-extra { background: var(--warn-wash); color: var(--warn); text-decoratio
 .en-phrases li { display: flex; align-items: center; justify-content: space-between; gap: var(--s4); padding: 10px 0; border-bottom: 1px solid var(--rule); }
 .en-phrases li > div { display: flex; flex-direction: column; gap: 2px; }
 .en-phrases strong { font: 600 1.05rem/1.4 var(--font-display); }
+.en-pron { font: 500 .95rem/1.4 var(--font-mono); color: var(--blue); }
+.en-card-pron { margin: 4px 0 0; }
 .en-question { font-size: 1.4rem; }
 .en-review { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: var(--s3); }
 .en-vocab { width: 100%; }

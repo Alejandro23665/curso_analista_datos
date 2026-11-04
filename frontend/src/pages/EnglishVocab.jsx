@@ -124,6 +124,7 @@ export default function EnglishVocab() {
         <p className="en-card-front" lang="en">
           {card.en}
         </p>
+        {card.pron && <p className="en-pron en-card-pron">Suena: {card.pron}</p>}
         <AudioButtons text={card.en} />
         {revealed ? (
           <>
