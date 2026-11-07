@@ -1,4 +1,4 @@
-import { CircleHelp, Code, Database, ListChecks } from "lucide-react";
+import { CircleHelp, Code, Database, ListChecks, ListOrdered, SquareTerminal } from "lucide-react";
 
 export const LEVELS = {
   fuerte: { label: "Fortaleza", color: "var(--ok)" },
@@ -13,6 +13,8 @@ export const KINDS = {
   sql: { Icon: Database, label: "SQL" },
   quiz: { Icon: CircleHelp, label: "Quiz" },
   checklist: { Icon: ListChecks, label: "Lista" },
+  parsons: { Icon: ListOrdered, label: "Ordenar" },
+  predict: { Icon: SquareTerminal, label: "¿Qué imprime?" },
 };
 
 export const STATUS = {

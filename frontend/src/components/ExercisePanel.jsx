@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Check, CircleCheck, CircleX, Eye, Lightbulb, Play } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, CircleCheck, CircleX, Eye, GripVertical, Lightbulb, Play } from "lucide-react";
 import { api } from "../api.js";
 import { runPython } from "../pyRunner.js";
 import { KINDS } from "../util.js";
@@ -31,6 +31,8 @@ export default function ExercisePanel({ exercise, solved, onSubmit }) {
       {exercise.kind === "sql" && <SqlExercise exercise={exercise} onSubmit={onSubmit} />}
       {exercise.kind === "quiz" && <QuizExercise exercise={exercise} onSubmit={onSubmit} />}
       {exercise.kind === "checklist" && <ChecklistExercise exercise={exercise} onSubmit={onSubmit} solved={solved} />}
+      {exercise.kind === "parsons" && <ParsonsExercise exercise={exercise} onSubmit={onSubmit} />}
+      {exercise.kind === "predict" && <PredictExercise exercise={exercise} onSubmit={onSubmit} />}
     </section>
   );
 }
@@ -335,6 +337,178 @@ function ChecklistExercise({ exercise, onSubmit, solved }) {
         </button>
         {!done && <span className="muted small">Marca todos los puntos para completarlo.</span>}
       </div>
+    </div>
+  );
+}
+
+// Ordenar líneas de código: se mueven con los botones, con el teclado o arrastrando.
+function ParsonsExercise({ exercise, onSubmit }) {
+  const [blocks, setBlocks] = useState(exercise.blocks);
+  const [result, setResult] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [dragging, setDragging] = useState(null);
+  const [explain, setExplain] = useState(false);
+
+  function move(from, to) {
+    if (to < 0 || to >= blocks.length || from === to) return;
+    setBlocks((list) => {
+      const next = [...list];
+      const [item] = next.splice(from, 1);
+      next.splice(to, 0, item);
+      return next;
+    });
+    setResult(null);
+  }
+
+  async function check() {
+    setBusy(true);
+    setExplain(false);
+    try {
+      setResult(await onSubmit({ order: blocks.map((b) => b.id) }));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const locked = Boolean(result && result.correct);
+  return (
+    <div className="stack">
+      <ol className="parsons" aria-label="Líneas de código para ordenar">
+        {blocks.map((block, index) => {
+          const wrong = result && !result.correct && result.first_wrong === index;
+          return (
+            <li
+              key={block.id}
+              className={"parsons-line" + (dragging === index ? " dragging" : "") + (wrong ? " wrong" : "") + (locked ? " right" : "")}
+              draggable={!locked}
+              onDragStart={() => setDragging(index)}
+              onDragEnd={() => setDragging(null)}
+              onDragOver={(event) => event.preventDefault()}
+              onDrop={() => {
+                if (dragging !== null) move(dragging, index);
+                setDragging(null);
+              }}
+            >
+              <GripVertical size={16} aria-hidden="true" className="grip" />
+              <code>{block.text || " "}</code>
+              <span className="parsons-moves">
+                <button className="btn ghost icon" disabled={locked || index === 0} onClick={() => move(index, index - 1)} aria-label={"Subir la línea " + (index + 1)}>
+                  <ArrowUp size={15} aria-hidden="true" />
+                </button>
+                <button className="btn ghost icon" disabled={locked || index === blocks.length - 1} onClick={() => move(index, index + 1)} aria-label={"Bajar la línea " + (index + 1)}>
+                  <ArrowDown size={15} aria-hidden="true" />
+                </button>
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+      <div className="actions">
+        <button className="btn primary" disabled={busy || locked} onClick={check}>
+          <Check size={16} aria-hidden="true" /> Comprobar orden
+        </button>
+        <span className="muted small push">La sangría ya viene puesta: solo cambia el orden.</span>
+      </div>
+      {result && (
+        <div className="console" aria-live="polite">
+          {result.correct ? (
+            <Verdict ok>Correcto: el programa está en orden.</Verdict>
+          ) : (
+            <Verdict>Aún no. La primera línea fuera de sitio está marcada en rojo.</Verdict>
+          )}
+          {(result.correct || explain) && result.explanation && <p>{result.explanation}</p>}
+          {!result.correct && !explain && result.explanation && (
+            <div>
+              <button className="btn ghost small" onClick={() => setExplain(true)}>
+                Ver explicación
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+      {exercise.hint && <HintOnly hint={exercise.hint} />}
+    </div>
+  );
+}
+
+// Seguir el código a mano y escribir lo que imprime (sin ejecutarlo).
+function PredictExercise({ exercise, onSubmit }) {
+  const [text, setText] = useState("");
+  const [result, setResult] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [reveal, setReveal] = useState(false);
+
+  async function check() {
+    setBusy(true);
+    try {
+      setResult(await onSubmit({ text }));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const locked = Boolean(result && result.correct);
+  return (
+    <div className="stack">
+      <CodeBlock code={exercise.code} lang="python" />
+      <label className="predict-label">
+        <span className="small muted">Salida exacta (una línea por cada print):</span>
+        <textarea
+          className="predict-input"
+          value={text}
+          onChange={(event) => {
+            setText(event.target.value);
+            setResult(null);
+          }}
+          disabled={locked}
+          rows={4}
+          spellCheck="false"
+          autoComplete="off"
+        />
+      </label>
+      <div className="actions">
+        <button className="btn primary" disabled={busy || locked || !text.trim()} onClick={check}>
+          <Check size={16} aria-hidden="true" /> Comprobar
+        </button>
+        <span className="muted small push">Hazlo a mano, con una tabla de variables: no lo ejecutes.</span>
+      </div>
+      {result && (
+        <div className="console" aria-live="polite">
+          {result.correct ? <Verdict ok>Correcto: seguiste bien el código.</Verdict> : <Verdict>No coincide. Repasa el código línea a línea.</Verdict>}
+          {(result.correct || reveal) && (
+            <>
+              {!result.correct && <pre>{result.expected}</pre>}
+              <p>{result.explanation}</p>
+            </>
+          )}
+          {!result.correct && !reveal && (
+            <div>
+              <button className="btn ghost small" onClick={() => setReveal(true)}>
+                Ver la salida correcta y la explicación
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+      {exercise.hint && <HintOnly hint={exercise.hint} />}
+    </div>
+  );
+}
+
+function HintOnly({ hint }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="helpers">
+      <div className="actions">
+        <button className="btn ghost small" onClick={() => setOpen((value) => !value)}>
+          <Lightbulb size={14} aria-hidden="true" /> {open ? "Ocultar pista" : "Pista"}
+        </button>
+      </div>
+      {open && (
+        <p className="hint">
+          <Lightbulb size={16} aria-hidden="true" /> <span>{hint}</span>
+        </p>
+      )}
     </div>
   );
 }

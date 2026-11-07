@@ -39,6 +39,11 @@ export const api = {
   runSql: (query) => request("/sql/run", send("POST", { query })),
   schema: () => request("/sandbox/schema"),
   submit: (exerciseId, body) => request("/exercises/" + exerciseId + "/submit", send("POST", body)),
+  studyEvent: (event) => request("/study/events", send("POST", event)),
+  game: () => request("/game"),
+  review: () => request("/review"),
+  interests: () => request("/interests"),
+  interest: (slug) => request("/interests/" + slug),
   english: {
     overview: () => request("/english/overview"),
     unit: (slug) => request("/english/units/" + slug),

@@ -32,9 +32,11 @@ TRACKS = [
         "icon": "🚀",
         "description": "Diseña y construye sistemas y productos completos (backend, seguridad, arquitectura, despliegue) y aprende a validarlos con clientes reales.",
         "sections": [
-            {"title": "Fundamentos de Python y herramientas",
-             "topics": FUNDAMENTOS + ["sys-python-pro", "leer-depurar-codigo", "de-herramientas"],
-             "description": "Git desde el principio, y a leer y depurar código: lo que más harás en tu primer empleo y al revisar lo que genera la IA."},
+            {"title": "Fundamentos de Python y lógica",
+             "topics": ["python-fundamentos", "python-estructuras", "logica-trazar", "logica-patrones", "logica-descomponer",
+                        "python-datos", "sys-python-pro", "leer-depurar-codigo", "de-herramientas"],
+             "description": "Incluye tres temas de lógica (seguir código a mano, patrones y cómo resolver problemas): la base para que lo demás "
+                            "no se olvide. Git desde el principio, y a leer y depurar código."},
             {"title": "SQL para el trabajo y las entrevistas",
              "topics": ["sql-select", "sql-agregaciones", "sql-joins", "sql-subconsultas-cte", "sql-ventanas"],
              "description": "Incluye CTE y funciones de ventana: son lo que más se pregunta en las pruebas técnicas."},

@@ -96,7 +96,7 @@ export default function EnglishUnit() {
 
       {tab === "leccion" && (
         <section className="sheet">
-          <Markdown>{unit.lesson}</Markdown>
+          <Markdown selfCheck>{unit.lesson}</Markdown>
           <div className="markdown">
             <h2>Frases clave</h2>
             <p className="muted">

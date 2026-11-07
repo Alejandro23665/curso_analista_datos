@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { ArrowLeft, ArrowRight, BookOpen, Check, Clock, Eye, FlaskConical, ListChecks, NotebookPen, PenLine, Undo2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Bookmark as BookmarkIcon, BookOpen, Check, Clock, Coffee, Eye, FlaskConical, ListChecks, NotebookPen, PenLine, Undo2 } from "lucide-react";
 import { api } from "../api.js";
 import ExercisePanel from "../components/ExercisePanel.jsx";
-import Markdown from "../components/Markdown.jsx";
+import Markdown, { headingsOf } from "../components/Markdown.jsx";
 import SchemaPanel from "../components/SchemaPanel.jsx";
 import Squares from "../components/Squares.jsx";
 import Toc from "../components/Toc.jsx";
 import { useAsync } from "../hooks.js";
 import { useTrack } from "../track.jsx";
+import { useGame } from "../study/game.jsx";
 import { prewarm } from "../pyRunner.js";
 import { KINDS } from "../util.js";
 
@@ -24,6 +25,7 @@ export default function Topic() {
   const tab = TABS.some((t) => t.id === params.get("tab")) ? params.get("tab") : "teoria";
   const { track, setTrack } = useTrack();
   const { data: topic, loading, error, reload, setData } = useAsync(() => api.topic(slug, track), [slug, track]);
+  const { afterSubmit } = useGame();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -61,6 +63,7 @@ export default function Topic() {
 
   async function submitExercise(exercise, body) {
     const result = await api.submit(exercise.id, body);
+    afterSubmit(result);
     setData((previous) => ({
       ...previous,
       progress: result.progress,
@@ -82,7 +85,7 @@ export default function Topic() {
         <h1>{topic.title}</h1>
         <p className="summary">{topic.summary}</p>
         <div className="crumbs">
-          <Link to="/ruta">{topic.track.title}</Link>
+          <Link to={topic.track.kind === "interest" ? "/intereses/" + topic.track.slug : "/ruta"}>{topic.track.title}</Link>
           <span>
             <Clock size={14} aria-hidden="true" /> {topic.hours} h estimadas
           </span>
@@ -130,9 +133,10 @@ export default function Topic() {
 
       {tab === "teoria" && (
         <div className="reading">
-        <Toc markdown={topic.theory} />
+        <Toc markdown={topic.theory} bookmarkKey={"datapath:bookmark:" + topic.slug} />
         <section className="sheet">
-          <Markdown>{topic.theory}</Markdown>
+          <Bookmark storageKey={"datapath:bookmark:" + topic.slug} markdown={topic.theory} />
+          <Markdown selfCheck>{topic.theory}</Markdown>
           <div className="sheet-actions">
             <button className={"btn " + (progress.theory_done ? "" : "primary")} onClick={toggleTheory}>
               {progress.theory_done ? (
@@ -149,6 +153,16 @@ export default function Topic() {
               Ir a la práctica <ArrowRight size={16} aria-hidden="true" />
             </button>
           </div>
+          {progress.theory_done && progress.solved < progress.total && (
+            <p className="notice small">
+              <Coffee size={16} aria-hidden="true" />
+              <span>
+                Consejo: haz una pausa real (o deja la práctica para mañana a primera hora) antes de los ejercicios. Llegarás con más energía y el
+                pequeño olvido hará que recordar te cueste un poco más, que es justo lo que fija lo aprendido. El tema te esperará en el{" "}
+                <Link to="/repaso">Repaso del día</Link>.
+              </span>
+            </p>
+          )}
         </section>
         </div>
       )}
@@ -293,5 +307,34 @@ function Notes({ slug, initial }) {
       )}
       <p className="muted small">Se guardan solos en tu base de datos. Admite Markdown: títulos, listas, tablas y bloques de código.</p>
     </section>
+  );
+}
+
+// "Sigue donde lo dejaste": recuerda la última sección leída de cada capítulo (la guarda el índice).
+function Bookmark({ storageKey, markdown }) {
+  const [saved] = useState(() => {
+    try {
+      return localStorage.getItem(storageKey);
+    } catch (_) {
+      return null;
+    }
+  });
+  const [hidden, setHidden] = useState(false);
+  const heading = headingsOf(markdown).find((h, i) => h.id === saved && i > 0);
+  if (!heading || hidden) return null;
+  return (
+    <p className="bookmark">
+      <BookmarkIcon size={16} aria-hidden="true" />
+      <span>
+        Lo dejaste en <strong>{heading.text}</strong>.
+      </span>
+      <a
+        href={"#" + heading.id}
+        className="btn small"
+        onClick={() => setHidden(true)}
+      >
+        Seguir leyendo
+      </a>
+    </p>
   );
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Route, Routes, useLocation } from "react-router-dom";
-import { ArrowRight, Languages, LayoutGrid, LogOut, Route as RouteIcon, Target } from "lucide-react";
+import { ArrowRight, Compass, Languages, LayoutGrid, LogOut, RotateCcw, Route as RouteIcon, Target, Trophy } from "lucide-react";
 import { api, UNAUTHORIZED_EVENT } from "./api.js";
 import BrandMark from "./components/BrandMark.jsx";
 import { useAsync } from "./hooks.js";
@@ -12,7 +12,13 @@ import EnglishVocab from "./pages/EnglishVocab.jsx";
 import Login from "./pages/Login.jsx";
 import Roadmap from "./pages/Roadmap.jsx";
 import Skills from "./pages/Skills.jsx";
+import Interest from "./pages/Interest.jsx";
+import Interests from "./pages/Interests.jsx";
+import Progress from "./pages/Progress.jsx";
+import Review from "./pages/Review.jsx";
 import Topic from "./pages/Topic.jsx";
+import { GameBadge, GameProvider, useGame } from "./study/game.jsx";
+import { TimerProvider, TimerWidget } from "./study/timer.jsx";
 import { useTrack } from "./track.jsx";
 
 function NotFound() {
@@ -57,10 +63,19 @@ function NextNote({ strip = false }) {
 
 const NAV = [
   { to: "/", label: "Panel", Icon: LayoutGrid, end: true },
+  { to: "/repaso", label: "Repaso", Icon: RotateCcw },
   { to: "/ruta", label: "Ruta", Icon: RouteIcon },
-  { to: "/habilidades", label: "Habilidades", Icon: Target },
+  { to: "/intereses", label: "Intereses", Icon: Compass },
   { to: "/ingles", label: "Inglés", Icon: Languages },
+  { to: "/habilidades", label: "Habilidades", Icon: Target },
+  { to: "/progreso", label: "Progreso", Icon: Trophy },
 ];
+
+// El temporizador avisa a la motivación cuando un bloque termina con su descanso (para actualizar la XP).
+function StudyProviders({ children }) {
+  const { refresh } = useGame();
+  return <TimerProvider onBlockDone={refresh}>{children}</TimerProvider>;
+}
 
 export default function App() {
   // required: el servidor pide contraseña; ok: hay una sesión válida
@@ -88,6 +103,8 @@ export default function App() {
   }
 
   return (
+    <GameProvider>
+    <StudyProviders>
     <div className="app">
       <aside className="rail">
         <NavLink to="/" className="brand" aria-label="DataPath, ir al panel">
@@ -103,6 +120,8 @@ export default function App() {
           ))}
         </nav>
         <div className="rail-foot">
+          <GameBadge />
+          <TimerWidget />
           <NextNote />
           {auth.required && (
             <button className="rail-logout" onClick={logout}>
@@ -119,6 +138,10 @@ export default function App() {
           <Route path="/ruta" element={<Roadmap />} />
           <Route path="/habilidades" element={<Skills />} />
           <Route path="/tema/:slug" element={<Topic />} />
+          <Route path="/repaso" element={<Review />} />
+          <Route path="/progreso" element={<Progress />} />
+          <Route path="/intereses" element={<Interests />} />
+          <Route path="/intereses/:slug" element={<Interest />} />
           <Route path="/ingles" element={<English />} />
           <Route path="/ingles/prueba" element={<EnglishPlacement />} />
           <Route path="/ingles/unidad/:slug" element={<EnglishUnit />} />
@@ -127,5 +150,7 @@ export default function App() {
         </Routes>
       </main>
     </div>
+    </StudyProviders>
+    </GameProvider>
   );
 }

@@ -13,7 +13,7 @@ from contextlib import redirect_stdout
 from . import content
 from .sandbox_seed import build_sql
 
-KINDS = {"sql", "python", "quiz", "checklist"}
+KINDS = {"sql", "python", "quiz", "checklist", "parsons", "predict"}
 errors, warnings = [], []
 
 
@@ -35,8 +35,8 @@ def main():
     slugs, ids = set(), set()
     conn = sqlite3.connect(":memory:")
     conn.executescript(build_sql())
-    phases = {p["slug"] for p in content.PHASES}
-    checked = {"python": 0, "sql": 0, "quiz": 0, "checklist": 0}
+    phases = {p["slug"] for p in content.PHASES} | {"interes-" + a["slug"] for a in content.intereses.AREAS}
+    checked = {kind: 0 for kind in sorted(KINDS)}
     skipped = []
 
     for topic in content.TOPICS:
@@ -67,6 +67,25 @@ def main():
             elif ex["kind"] == "checklist":
                 if len(ex["items"]) < 2:
                     errors.append("%s: checklist muy corta" % eid)
+            elif ex["kind"] == "parsons":
+                if len(ex["lines"]) < 3:
+                    errors.append("%s: hay que ordenar al menos 3 líneas" % eid)
+                shuffled = [b["text"] for b in content.public_exercise(dict(ex, topic=slug))["blocks"]]
+                if shuffled == ex["lines"]:
+                    errors.append("%s: las líneas mezcladas salen ya en orden" % eid)
+                ok, msg = run_python(chr(10).join(ex["lines"]), "")
+                if not ok:
+                    errors.append("%s: el programa ordenado no se ejecuta -> %s" % (eid, msg))
+            elif ex["kind"] == "predict":
+                buf = io.StringIO()
+                try:
+                    with redirect_stdout(buf):
+                        exec(compile(ex["code"], "<predict>", "exec"), {"__name__": "__main__"})
+                except BaseException:
+                    errors.append("%s: el código no se ejecuta -> %s" % (eid, traceback.format_exc(limit=-1)))
+                else:
+                    if not content.check_predict(ex, buf.getvalue())[0]:
+                        errors.append("%s: la salida real no coincide con la respuesta: %r" % (eid, buf.getvalue()))
             elif ex["kind"] == "sql":
                 if ex["pg_only"]:
                     skipped.append(eid)
@@ -100,7 +119,21 @@ def main():
             if content.get_topic(slug) is None:
                 errors.append("ruta %s: el tema %s no existe" % (track["slug"], slug))
         en_alguna_ruta.update(vistos)
-    for slug in slugs - en_alguna_ruta:
+    # Temas de interés: cada uno en un solo bloque de su área
+    en_areas = set()
+    for area in content.intereses.AREAS:
+        vistos = content.intereses.area_topic_slugs(area)
+        if len(vistos) != len(set(vistos)):
+            errors.append("area %s: tema repetido" % area["slug"])
+        for slug in vistos:
+            topic = content.get_topic(slug)
+            if not topic or topic.get("interest") != area["slug"]:
+                errors.append("area %s: el tema %s no existe en el area" % (area["slug"], slug))
+        en_areas.update(vistos)
+    for topic in content.TOPICS:
+        if topic.get("interest") and topic["slug"] not in en_areas:
+            errors.append("el tema de interes %s no esta en ningun bloque" % topic["slug"])
+    for slug in slugs - en_alguna_ruta - en_areas:
         errors.append("el tema %s no esta en ninguna ruta" % slug)
     for track in content.TRACKS:
         horas = sum(content.get_topic(s)["hours"] for s in content.track_topic_slugs(track) if content.get_topic(s))

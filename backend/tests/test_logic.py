@@ -122,7 +122,7 @@ class ContentTests(unittest.TestCase):
         self.assertIn("explanation", content.public_exercise(quiz))
 
     def test_cada_tema_pertenece_a_una_fase(self):
-        phases = {p["slug"] for p in content.PHASES}
+        phases = {p["slug"] for p in content.PHASES} | {"interes-" + a["slug"] for a in content.intereses.AREAS}
         self.assertTrue(all(t["phase"] in phases for t in content.TOPICS))
 
 

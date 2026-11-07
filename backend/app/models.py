@@ -78,3 +78,32 @@ class EnglishCard(Base):
     reviews: Mapped[int] = mapped_column(Integer, default=0)
     lapses: Mapped[int] = mapped_column(Integer, default=0)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
+
+class StudyEvent(Base):
+    """Eventos del estudio: bloques del temporizador, descansos (respetados o saltados), repasos y desafíos.
+
+    `ref` identifica el evento en el cliente (p. ej. la hora de inicio del bloque) para no registrarlo dos veces
+    cuando hay varias pestañas abiertas.
+    """
+
+    __tablename__ = "study_events"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    kind: Mapped[str] = mapped_column(String(30), index=True)
+    ref: Mapped[str] = mapped_column(String(80), default="")
+    minutes: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+
+
+class ExerciseReview(Base):
+    """Estado de repaso espaciado de cada ejercicio (del currículo o de los temas de interés)."""
+
+    __tablename__ = "exercise_reviews"
+
+    exercise_id: Mapped[str] = mapped_column(String(80), primary_key=True)
+    box: Mapped[int] = mapped_column(Integer, default=0)
+    due: Mapped[date] = mapped_column(Date, index=True)
+    lapses: Mapped[int] = mapped_column(Integer, default=0)
+    reviews: Mapped[int] = mapped_column(Integer, default=0)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)

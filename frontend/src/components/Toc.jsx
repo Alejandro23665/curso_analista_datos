@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { headingsOf } from "./Markdown.jsx";
 
 // Índice de un capítulo largo: enlaza cada sección y resalta la que estás leyendo.
-export default function Toc({ markdown }) {
+export default function Toc({ markdown, bookmarkKey }) {
   const headings = headingsOf(markdown);
   const [active, setActive] = useState(headings[0] ? headings[0].id : null);
 
@@ -12,14 +12,23 @@ export default function Toc({ markdown }) {
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-        if (visible.length) setActive(visible[0].target.id);
+        if (visible.length) {
+          setActive(visible[0].target.id);
+          if (bookmarkKey) {
+            try {
+              localStorage.setItem(bookmarkKey, visible[0].target.id);
+            } catch (_) {
+              /* sin almacenamiento */
+            }
+          }
+        }
       },
       { rootMargin: "0px 0px -70% 0px" }
     );
     elements.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [markdown]);
+  }, [markdown, bookmarkKey]);
 
   if (headings.length < 3) return null;
   return (

@@ -1,9 +1,10 @@
 """Currículo: fases, temas, teoría y ejercicios. Todo el contenido vive en archivos Python/Markdown,
 así puedes editarlo o ampliarlo sin tocar la base de datos."""
+import hashlib
 from pathlib import Path
 
 from . import (fase_bi, fase_carrera, fase_de, fase_empleo, fase_estadistica, fase_fundamentos, fase_ia_asistida, fase_ia_avanzada,
-               fase_ml, fase_pandas, fase_producto, fase_python, fase_sql)
+               fase_logica, fase_ml, fase_pandas, fase_producto, fase_python, fase_sql)
 from .recursos import RECURSOS, seccion_recursos
 
 PHASES = [
@@ -29,7 +30,7 @@ PHASES = [
      "description": "Interfaces para apps con IA, freelance, algoritmos para entrevistas, inglés técnico y búsqueda de empleo."},
 ]
 
-TOPICS = [t for module in (fase_fundamentos, fase_python, fase_sql, fase_pandas, fase_ia_asistida, fase_estadistica, fase_bi, fase_de, fase_ml, fase_producto,
+TOPICS = [t for module in (fase_fundamentos, fase_logica, fase_python, fase_sql, fase_pandas, fase_ia_asistida, fase_estadistica, fase_bi, fase_de, fase_ml, fase_producto,
                            fase_ia_avanzada, fase_carrera, fase_empleo)
           for t in module.TOPICS]
 
@@ -43,6 +44,11 @@ def _teoria(topic):
 
 
 TOPICS = [dict(t, theory=_teoria(t)) for t in TOPICS]
+
+# Temas de interés (fuera de las rutas): cada área trae sus propios temas y capítulos
+from . import intereses  # noqa: E402
+
+TOPICS = TOPICS + intereses.TOPICS
 
 # Añade la sección "Para profundizar" a los temas que tienen recursos recomendados
 TOPICS = [dict(t, theory=t["theory"].rstrip() + "\n" + seccion_recursos(t["slug"])) if t["slug"] in RECURSOS else t
@@ -75,10 +81,45 @@ def topic_meta(topic):
     }
 
 
+def _shuffled_blocks(exercise):
+    """Las líneas de un ejercicio de ordenar, mezcladas siempre igual (y nunca en el orden correcto)."""
+    lines = exercise["lines"]
+    order = sorted(range(len(lines)), key=lambda i: hashlib.sha256((exercise["id"] + str(i)).encode()).hexdigest())
+    if [lines[i] for i in order] == lines and len(lines) > 1:
+        order = order[1:] + order[:1]
+    return [{"id": i, "text": lines[i]} for i in order]
+
+
 def public_exercise(exercise):
-    """Ejercicio listo para enviar al navegador (sin la respuesta de los quizzes)."""
-    data = {k: v for k, v in exercise.items() if k not in ("answer", "topic")}
+    """Ejercicio listo para enviar al navegador (sin la respuesta de los quizzes ni el orden correcto)."""
+    data = {k: v for k, v in exercise.items() if k not in ("answer", "topic", "lines")}
+    if exercise["kind"] == "parsons":
+        data["blocks"] = _shuffled_blocks(exercise)
+        data.pop("explanation", None)
+    if exercise["kind"] == "predict":
+        data.pop("explanation", None)
     return data
+
+
+def check_parsons(exercise, order):
+    """Compara el texto de las líneas (dos líneas idénticas son intercambiables)."""
+    lines = exercise["lines"]
+    valid = sorted(order) == list(range(len(lines)))
+    got = [lines[i] for i in order] if valid else []
+    correct = got == lines
+    first_wrong = next((n for n, (a, b) in enumerate(zip(got, lines)) if a != b), None) if valid else None
+    return correct, {"explanation": exercise.get("explanation", ""), "first_wrong": first_wrong, "solution": lines}
+
+
+def _clean_output(text):
+    lines = (text or "").replace("\r\n", "\n").strip("\n").split("\n")
+    return "\n".join(line.rstrip() for line in lines).strip()
+
+
+def check_predict(exercise, text):
+    """La salida escrita debe coincidir línea a línea (sin contar espacios al final de cada línea)."""
+    correct = _clean_output(text) == _clean_output(exercise["answer"])
+    return correct, {"explanation": exercise["explanation"], "expected": exercise["answer"]}
 
 
 from .tracks import (TRACKS, get_track, track_topic_slugs, tracks_with_topic, visible_topic_slugs,  # noqa: E402,F401

@@ -1,4 +1,6 @@
+import { useState } from "react";
 import ReactMarkdown from "react-markdown";
+import { Eye } from "lucide-react";
 import remarkGfm from "remark-gfm";
 import CodeBlock from "./CodeBlock.jsx";
 
@@ -54,10 +56,30 @@ const components = {
   },
 };
 
-export default function Markdown({ children }) {
+// Las respuestas de "Comprueba que entendiste" y de la autoevaluación quedan ocultas hasta que pulsas:
+// así primero intentas recordar (que es lo que fija lo aprendido) y luego compruebas.
+function Reveal({ children }) {
+  const [open, setOpen] = useState(false);
+  if (open) return <p className="reveal-open">{children}</p>;
+  return (
+    <p className="reveal">
+      <button type="button" className="btn small" onClick={() => setOpen(true)}>
+        <Eye size={14} aria-hidden="true" /> Piensa tu respuesta y luego muéstrala
+      </button>
+    </p>
+  );
+}
+
+const selfCheckComponents = {
+  ...components,
+  p: ({ node, children, ...props }) =>
+    /^Respuestas?:/.test(textOf(children).trim()) ? <Reveal>{children}</Reveal> : <p {...props}>{children}</p>,
+};
+
+export default function Markdown({ children, selfCheck = false }) {
   return (
     <div className="markdown">
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+      <ReactMarkdown remarkPlugins={[remarkGfm]} components={selfCheck ? selfCheckComponents : components}>
         {children || ""}
       </ReactMarkdown>
     </div>

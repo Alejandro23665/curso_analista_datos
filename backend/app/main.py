@@ -4,10 +4,9 @@ import logging
 import math
 import threading
 import time
-from collections import Counter, defaultdict
+from collections import defaultdict
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
-from zoneinfo import ZoneInfo
 
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,13 +17,15 @@ from sqlalchemy.orm import Session
 from starlette.concurrency import run_in_threadpool
 
 from . import auth, content, sandbox
-from .config import APP_TZ, CORS_ORIGINS, DATABASE_URL_SOURCE, HOURS_PER_DAY, ON_VERCEL
+from .config import CORS_ORIGINS, DATABASE_URL_SOURCE, HOURS_PER_DAY, ON_VERCEL
 from .db import Base, engine, get_db
 from .english_api import router as english_router
 from .models import Activity, Attempt, Note, TopicProgress
+from .progress import TZ, activity_counts as _activity_counts, streak as _streak, topic_states as _topic_states
+from .interests_api import router as interests_router
+from .study_api import record_mode, router as study_router, update_review, xp_for_attempt
 
 log = logging.getLogger("datapath")
-TZ = ZoneInfo(APP_TZ)
 
 MIN_ATTEMPTS = 3  # intentos mínimos para clasificar una habilidad
 
@@ -66,6 +67,8 @@ app.add_middleware(
     CORSMiddleware, allow_origins=CORS_ORIGINS, allow_credentials=True, allow_methods=["*"], allow_headers=["*"],
 )
 app.include_router(english_router)
+app.include_router(study_router)
+app.include_router(interests_router)
 
 def _db_error_message(exc: Exception) -> str:
     """Explica por qué falló la base, sin mostrar contraseñas (los errores de psycopg no las incluyen)."""
@@ -100,67 +103,6 @@ async def guard(request: Request, call_next):
 # Cálculo de progreso
 # ---------------------------------------------------------------------------
 
-def _topic_states(db: Session) -> dict:
-    theory = {row.topic_slug: row.theory_done for row in db.scalars(select(TopicProgress))}
-
-    solved = defaultdict(set)
-    for slug, exercise_id in db.execute(
-        select(Attempt.topic_slug, Attempt.exercise_id).where(Attempt.correct.is_(True)).distinct()
-    ):
-        solved[slug].add(exercise_id)
-
-    attempts = {
-        slug: (int(n or 0), int(ok or 0))
-        for slug, n, ok in db.execute(
-            select(Attempt.topic_slug, func.count(), func.sum(case((Attempt.correct.is_(True), 1), else_=0)))
-            .group_by(Attempt.topic_slug)
-        )
-    }
-
-    states = {}
-    for topic in content.TOPICS:
-        slug = topic["slug"]
-        valid_ids = {ex["id"] for ex in topic["exercises"]}
-        total = len(valid_ids)
-        n_solved = len(solved[slug] & valid_ids)
-        done = bool(theory.get(slug))
-        n_attempts, n_correct = attempts.get(slug, (0, 0))
-        if total:
-            fraction = 0.25 * (1 if done else 0) + 0.75 * (n_solved / total)
-        else:
-            fraction = 1.0 if done else 0.0
-        if done and n_solved == total:
-            status = "completado"
-        elif done or n_solved:
-            status = "en_curso"
-        else:
-            status = "pendiente"
-        states[slug] = {
-            "theory_done": done, "solved": n_solved, "total": total, "percent": round(fraction * 100),
-            "status": status, "attempts": n_attempts,
-            "accuracy": round(n_correct / n_attempts, 2) if n_attempts else None,
-        }
-    return states
-
-
-def _activity_counts(db: Session) -> Counter:
-    counts = Counter()
-    for (ts,) in db.execute(select(Attempt.created_at)):
-        counts[ts.astimezone(TZ).date()] += 1
-    for (ts,) in db.execute(select(Activity.created_at)):
-        counts[ts.astimezone(TZ).date()] += 1
-    return counts
-
-
-def _streak(counts: Counter, today) -> int:
-    day = today if counts.get(today) else today - timedelta(days=1)
-    streak = 0
-    while counts.get(day):
-        streak += 1
-        day -= timedelta(days=1)
-    return streak
-
-
 def _skill_level(attempts: int, accuracy: float | None) -> str:
     if attempts == 0:
         return "sin_datos"
@@ -193,6 +135,9 @@ class SubmitBody(BaseModel):
     answer: int | None = None   # quiz
     query: str | None = None    # sql
     passed: bool | None = None  # python / checklist (se evalúan en el navegador)
+    order: list[int] | None = None  # parsons: orden elegido de las líneas
+    text: str | None = None     # predict: salida que escribió el alumno
+    mode: str = "topic"         # topic, review (repaso del día) o challenge (desafío del día)
 
 
 # ---------------------------------------------------------------------------
@@ -259,13 +204,19 @@ def get_topic(slug: str, track: str | None = None, db: Session = Depends(get_db)
             select(Attempt.exercise_id).where(Attempt.topic_slug == slug, Attempt.correct.is_(True)).distinct()
         )
     }
-    belongs = content.tracks_with_topic(slug)
-    chosen = content.get_track(track)
-    if slug not in content.track_topic_slugs(chosen) and belongs:
-        chosen = content.get_track(belongs[0]["slug"])
-    order = content.track_topic_slugs(chosen)
-    if slug not in order:
-        order = [t["slug"] for t in content.TOPICS]
+    if topic.get("interest"):
+        # Tema de interés: se navega dentro de su área, no de una ruta
+        area = content.intereses.get_area(topic["interest"])
+        belongs, order = [], content.intereses.area_topic_slugs(area)
+        chosen = {"slug": area["slug"], "title": area["title"], "kind": "interest"}
+    else:
+        belongs = content.tracks_with_topic(slug)
+        chosen = content.get_track(track)
+        if slug not in content.track_topic_slugs(chosen) and belongs:
+            chosen = content.get_track(belongs[0]["slug"])
+        order = content.track_topic_slugs(chosen)
+        if slug not in order:
+            order = [t["slug"] for t in content.TOPICS if not t.get("interest")]
     i = order.index(slug)
     return {
         **content.topic_meta(topic),
@@ -276,7 +227,7 @@ def get_topic(slug: str, track: str | None = None, db: Session = Depends(get_db)
         "progress": _topic_states(db)[slug],
         "prev": order[i - 1] if i > 0 else None,
         "next": order[i + 1] if i + 1 < len(order) else None,
-        "track": {"slug": chosen["slug"], "title": chosen["title"]},
+        "track": {"slug": chosen["slug"], "title": chosen["title"], "kind": chosen.get("kind", "track")},
         "tracks": belongs,
     }
 
@@ -392,15 +343,24 @@ def submit(exercise_id: str, body: SubmitBody, db: Session = Depends(get_db)):
         except sandbox.SandboxError as exc:
             correct = False
             result = {"feedback": "Tu consulta tiene un error.", "error": str(exc)}
+    elif kind == "parsons":
+        if body.order is None:
+            raise HTTPException(422, "Falta el orden de las líneas")
+        correct, result = content.check_parsons(exercise, body.order)
+    elif kind == "predict":
+        correct, result = content.check_predict(exercise, body.text or "")
     else:  # python, checklist
         correct = bool(body.passed)
 
+    xp = xp_for_attempt(db, exercise_id, correct)
     db.add(Attempt(
         exercise_id=exercise_id, topic_slug=exercise["topic"], skill=exercise["skill"],
         kind=kind, correct=correct,
     ))
+    update_review(db, exercise_id, correct)
+    xp += record_mode(db, exercise_id, correct, body.mode)
     db.commit()
-    return {"correct": correct, **result, "progress": _topic_states(db)[exercise["topic"]]}
+    return {"correct": correct, **result, "xp_gained": xp, "progress": _topic_states(db)[exercise["topic"]]}
 
 
 def _track_summary(track: dict, states: dict) -> dict:
