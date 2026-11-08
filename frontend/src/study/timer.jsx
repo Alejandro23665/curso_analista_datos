@@ -10,8 +10,6 @@ import { askNotifications, beep, notify } from "./alerts.js";
 // Fases: idle → study (o paused) → break (la página se bloquea) → ready (descanso terminado) → study...
 
 const KEY = "datapath:timer:v1";
-const SKIP_PHRASE = "Elijo saltarme el descanso";
-const HOLD_SECONDS = 10;
 
 export const PRESETS = [
   { label: "Pomodoro 25/5", study: 25, short: 5, long: 15, every: 4 },
@@ -31,7 +29,6 @@ const DEFAULT = {
   warned: false,
   day: "",
   blocksToday: 0,
-  skippedToday: 0,
 };
 
 const BREAK_TIPS = [
@@ -101,7 +98,7 @@ export function TimerProvider({ children, onBlockDone }) {
     }
     const day = todayKey();
     // Los contadores de "hoy" vuelven a cero al cambiar de día.
-    const value = next.day === day ? next : { ...next, day, blocksToday: 0, skippedToday: 0 };
+    const value = next.day === day ? next : { ...next, day, blocksToday: 0 };
     save(value);
     setState(value);
     return true;
@@ -192,17 +189,6 @@ export function TimerProvider({ children, onBlockDone }) {
       if (current.phase === "break") return;
       commit(null, { ...current, phase: "idle", duration: 0, cycle: current.phase === "ready" ? current.cycle : 0 });
     },
-    skipBreak() {
-      const current = load();
-      if (current.phase !== "break") return;
-      if (commit(current, {
-        ...current, phase: "ready", duration: 0, day: todayKey(),
-        blocksToday: current.day === todayKey() ? current.blocksToday : 0,
-        skippedToday: (current.day === todayKey() ? current.skippedToday : 0) + 1,
-      })) {
-        sendEvent("break_skipped", current.start, 0);
-      }
-    },
     setConfig(patch) {
       const current = load();
       commit(null, { ...current, config: { ...current.config, ...patch } });
@@ -213,7 +199,7 @@ export function TimerProvider({ children, onBlockDone }) {
   return (
     <TimerContext.Provider value={value}>
       {children}
-      {state.phase === "break" && <BreakLock left={value.left} state={state} onSkip={actions.skipBreak} />}
+      {state.phase === "break" && <BreakLock left={value.left} state={state} />}
     </TimerContext.Provider>
   );
 }
@@ -226,8 +212,7 @@ export function useTimer() {
 // Pantalla de descanso (bloquea toda la página)
 // ---------------------------------------------------------------------------
 
-function BreakLock({ left, state, onSkip }) {
-  const [skipping, setSkipping] = useState(false);
+function BreakLock({ left, state }) {
   const tip = BREAK_TIPS[Math.floor(state.start / 1000) % BREAK_TIPS.length];
   const total = state.duration || 1;
   return (
@@ -245,64 +230,6 @@ function BreakLock({ left, state, onSkip }) {
         <p className="muted small">
           Lo que estudiaste se asienta mientras descansas. DataPath se desbloquea solo cuando termine el descanso.
         </p>
-        {skipping ? <SkipForm onSkip={onSkip} onCancel={() => setSkipping(false)} /> : (
-          <button className="btn ghost small break-skip" onClick={() => setSkipping(true)}>
-            Necesito saltarme el descanso
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// Salida de emergencia con fricción: mantener pulsado 10 s y escribir la frase.
-function SkipForm({ onSkip, onCancel }) {
-  const [held, setHeld] = useState(0);
-  const [holding, setHolding] = useState(false);
-  const [text, setText] = useState("");
-
-  useEffect(() => {
-    if (!holding || held >= HOLD_SECONDS) return undefined;
-    const id = setTimeout(() => setHeld((value) => value + 1), 1000);
-    return () => clearTimeout(id);
-  }, [holding, held]);
-
-  const phraseOk = text.trim().toLowerCase() === SKIP_PHRASE.toLowerCase();
-  const holdOk = held >= HOLD_SECONDS;
-  const release = () => {
-    setHolding(false);
-    if (held < HOLD_SECONDS) setHeld(0);
-  };
-
-  return (
-    <div className="skip-form">
-      <p className="small">
-        Solo para urgencias. Quedará registrado en tus estadísticas y este bloque no sumará XP.
-      </p>
-      <button
-        type="button"
-        className={"btn hold" + (holdOk ? " done" : "")}
-        onPointerDown={() => setHolding(true)}
-        onPointerUp={release}
-        onPointerLeave={release}
-        onKeyDown={(event) => (event.key === " " || event.key === "Enter") && setHolding(true)}
-        onKeyUp={release}
-        disabled={holdOk}
-      >
-        <span className="hold-fill" style={{ width: (held / HOLD_SECONDS) * 100 + "%" }} aria-hidden="true" />
-        <span className="hold-label">{holdOk ? "Listo" : "Mantén pulsado " + (HOLD_SECONDS - held) + " s"}</span>
-      </button>
-      <label className="small">
-        Escribe: <strong>{SKIP_PHRASE}</strong>
-        <input value={text} onChange={(event) => setText(event.target.value)} autoComplete="off" spellCheck="false" />
-      </label>
-      <div className="row">
-        <button className="btn small" onClick={onCancel}>
-          Mejor descanso
-        </button>
-        <button className="btn small danger" disabled={!phraseOk || !holdOk} onClick={onSkip}>
-          Saltar el descanso
-        </button>
       </div>
     </div>
   );
@@ -409,7 +336,6 @@ function TimerPanel({ onClose }) {
 
         <p className="muted small num">
           Hoy: {state.day === todayKey() ? state.blocksToday : 0} bloques completados
-          {state.day === todayKey() && state.skippedToday ? " · " + state.skippedToday + " descansos saltados" : ""}
         </p>
 
         {showSettings && (

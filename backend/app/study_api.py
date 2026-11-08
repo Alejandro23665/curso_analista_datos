@@ -56,14 +56,16 @@ def _history(db: Session):
     return attempts, activities, events
 
 
-def xp_for_attempt(db: Session, exercise_id: str, correct: bool) -> int:
-    """XP que gana un intento antes de guardarlo (misma regla que game.xp_entries)."""
+def xp_for_attempt(db: Session, exercise_id: str, correct: bool) -> tuple[int, bool]:
+    """XP que gana un intento antes de guardarlo y si fue un golpe de suerte (misma regla que game.xp_entries)."""
     if not correct:
-        return 0
+        return 0, False
     previous = {ok for (ok,) in db.execute(select(Attempt.correct).where(Attempt.exercise_id == exercise_id))}
     if True in previous:
-        return 0
-    return game.XP_SOLVED + (0 if False in previous else game.XP_FIRST_TRY)
+        return 0, False
+    xp = game.XP_SOLVED + (0 if False in previous else game.XP_FIRST_TRY)
+    lucky = game.es_golpe_de_suerte(exercise_id, _today())
+    return (xp * 2 if lucky else xp), lucky
 
 
 def _weekly(entries, attempts, events, today):

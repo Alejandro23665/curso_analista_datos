@@ -352,7 +352,7 @@ def submit(exercise_id: str, body: SubmitBody, db: Session = Depends(get_db)):
     else:  # python, checklist
         correct = bool(body.passed)
 
-    xp = xp_for_attempt(db, exercise_id, correct)
+    xp, lucky = xp_for_attempt(db, exercise_id, correct)
     db.add(Attempt(
         exercise_id=exercise_id, topic_slug=exercise["topic"], skill=exercise["skill"],
         kind=kind, correct=correct,
@@ -360,7 +360,7 @@ def submit(exercise_id: str, body: SubmitBody, db: Session = Depends(get_db)):
     update_review(db, exercise_id, correct)
     xp += record_mode(db, exercise_id, correct, body.mode)
     db.commit()
-    return {"correct": correct, **result, "xp_gained": xp, "progress": _topic_states(db)[exercise["topic"]]}
+    return {"correct": correct, **result, "xp_gained": xp, "lucky": lucky, "progress": _topic_states(db)[exercise["topic"]]}
 
 
 def _track_summary(track: dict, states: dict) -> dict:

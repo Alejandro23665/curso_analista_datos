@@ -24,6 +24,16 @@ XP_EVENTS = {
     "challenge": 25,      # desafío del día superado
 }
 DAILY_GOAL_XP = 60
+LUCKY_EVERY = 6           # golpe de suerte: más o menos 1 de cada 6 ejercicios resueltos da el doble de XP
+
+
+def es_golpe_de_suerte(exercise_id: str, day) -> bool:
+    """Recompensa variable: decide (de forma reproducible) si resolver este ejercicio hoy da el doble de XP.
+
+    Depende del ejercicio y del día, así que el cálculo del historial siempre da lo mismo y no se puede forzar repitiendo.
+    """
+    marca = hashlib.sha256(("%s:%s" % (exercise_id, day.isoformat())).encode()).hexdigest()
+    return int(marca, 16) % LUCKY_EVERY == 0
 
 # Actividades que suman XP una sola vez por tema
 _ONCE_PER_TOPIC = {"theory", "english_lesson"}
@@ -39,7 +49,8 @@ def xp_entries(attempts, activities, events):
     solved, failed = set(), set()
     for day, exercise_id, correct in attempts:
         if correct and exercise_id not in solved:
-            entries.append((day, XP_SOLVED + (0 if exercise_id in failed else XP_FIRST_TRY), "ejercicio"))
+            xp = XP_SOLVED + (0 if exercise_id in failed else XP_FIRST_TRY)
+            entries.append((day, xp * 2 if es_golpe_de_suerte(exercise_id, day) else xp, "ejercicio"))
             solved.add(exercise_id)
         elif not correct:
             failed.add(exercise_id)

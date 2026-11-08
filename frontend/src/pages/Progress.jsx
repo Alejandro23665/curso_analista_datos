@@ -1,5 +1,6 @@
-import { Flame, Lock, ShieldCheck, Target, Timer } from "lucide-react";
-import { useGame, AchievementIcon } from "../study/game.jsx";
+import { useState } from "react";
+import { Flame, Lock, ShieldCheck, Target, Timer, Volume2, VolumeX } from "lucide-react";
+import { useGame, AchievementIcon, setSounds, soundsOn } from "../study/game.jsx";
 import { percent } from "../util.js";
 
 // Tu progreso de estudio: nivel, racha con protectores, meta diaria, resumen semanal, calendario y logros.
@@ -159,8 +160,7 @@ export default function Progress() {
             <dd>
               {Math.floor(weekly.this.minutes / 60)} h {weekly.this.minutes % 60} min
               <small>
-                {weekly.this.blocks} bloques
-                {weekly.this.skipped ? " · " + weekly.this.skipped + " descansos saltados" : " · ningún descanso saltado"}
+                {weekly.this.blocks} {weekly.this.blocks === 1 ? "bloque" : "bloques"}
               </small>
             </dd>
           </div>
@@ -207,6 +207,9 @@ export default function Progress() {
             <span>Resolver un ejercicio por primera vez</span> <strong>10 XP (+5 si es a la primera)</strong>
           </li>
           <li>
+            <span>Golpe de suerte: más o menos 1 de cada 6 ejercicios nuevos da el doble</span> <strong>XP × 2</strong>
+          </li>
+          <li>
             <span>Acertar un ejercicio del repaso del día</span> <strong>8 XP (2 si fallas)</strong>
           </li>
           <li>
@@ -223,10 +226,28 @@ export default function Progress() {
           </li>
         </ul>
         <p className="muted small">
-          Saltarse un descanso no resta XP, pero ese bloque no suma. La XP premia lo que de verdad te hace aprender: acertar a la primera, repasar y
-          descansar.
+          La XP premia lo que de verdad te hace aprender: acertar a la primera, repasar y descansar.
         </p>
+        <SoundToggle />
       </section>
     </div>
+  );
+}
+
+function SoundToggle() {
+  const [on, setOn] = useState(soundsOn);
+  const Icon = on ? Volume2 : VolumeX;
+  return (
+    <label className="row small">
+      <input
+        type="checkbox"
+        checked={on}
+        onChange={(event) => {
+          setSounds(event.target.checked);
+          setOn(event.target.checked);
+        }}
+      />
+      <Icon size={16} aria-hidden="true" /> Sonidos al acertar y en las celebraciones
+    </label>
   );
 }

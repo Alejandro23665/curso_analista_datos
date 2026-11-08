@@ -1,15 +1,25 @@
-// Avisos del temporizador: un sonido corto (sin archivos de audio) y notificaciones del sistema.
+// Sonidos cortos (sin archivos de audio) para el temporizador y las celebraciones, y notificaciones del sistema.
 
 let context = null;
+
+// Notas (Hz) y separación entre ellas (s) de cada sonido.
+const SOUNDS = {
+  warn: [[660], 0.18],
+  start: [[523, 784], 0.18],
+  end: [[784, 659, 523], 0.18],
+  win: [[784, 1047], 0.09],                       // acierto: dos notas rápidas hacia arriba
+  lucky: [[784, 988, 1175, 1568], 0.08],          // golpe de suerte: arpegio brillante
+  big: [[523, 659, 784, 1047], 0.13],             // celebración grande
+};
 
 export function beep(kind = "end") {
   try {
     context = context || new (window.AudioContext || window.webkitAudioContext)();
-    const notes = kind === "warn" ? [660] : kind === "start" ? [523, 784] : [784, 659, 523];
+    const [notes, gap] = SOUNDS[kind] || SOUNDS.end;
     notes.forEach((frequency, i) => {
       const oscillator = context.createOscillator();
       const gain = context.createGain();
-      const at = context.currentTime + i * 0.18;
+      const at = context.currentTime + i * gap;
       oscillator.type = "sine";
       oscillator.frequency.value = frequency;
       gain.gain.setValueAtTime(0.0001, at);

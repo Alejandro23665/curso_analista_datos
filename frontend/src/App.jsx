@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Route, Routes, useLocation } from "react-router-dom";
-import { ArrowRight, Compass, Languages, LayoutGrid, LogOut, RotateCcw, Route as RouteIcon, Target, Trophy } from "lucide-react";
+import { ArrowRight, Compass, Languages, LayoutGrid, LogOut, PanelLeftClose, PanelLeftOpen, RotateCcw, Route as RouteIcon, Target, Trophy } from "lucide-react";
 import { api, UNAUTHORIZED_EVENT } from "./api.js";
 import BrandMark from "./components/BrandMark.jsx";
 import { useAsync } from "./hooks.js";
@@ -77,9 +77,28 @@ function StudyProviders({ children }) {
   return <TimerProvider onBlockDone={refresh}>{children}</TimerProvider>;
 }
 
+const RAIL_KEY = "datapath:rail-hidden";
+
 export default function App() {
   // required: el servidor pide contraseña; ok: hay una sesión válida
   const [auth, setAuth] = useState({ checked: false, required: false, ok: true });
+  // Menú lateral oculto (preferencia guardada en este navegador); el contador sigue visible en una barra flotante.
+  const [railHidden, setRailHidden] = useState(() => {
+    try {
+      return localStorage.getItem(RAIL_KEY) === "1";
+    } catch (_) {
+      return false;
+    }
+  });
+  const toggleRail = () =>
+    setRailHidden((hidden) => {
+      try {
+        localStorage.setItem(RAIL_KEY, hidden ? "0" : "1");
+      } catch (_) {
+        /* sin almacenamiento */
+      }
+      return !hidden;
+    });
 
   useEffect(() => {
     api
@@ -105,7 +124,15 @@ export default function App() {
   return (
     <GameProvider>
     <StudyProviders>
-    <div className="app">
+    <div className={"app" + (railHidden ? " rail-hidden" : "")}>
+      {railHidden ? (
+        <div className="float-bar">
+          <button className="float-menu" onClick={toggleRail} aria-label="Mostrar el menú lateral" title="Mostrar el menú">
+            <PanelLeftOpen size={18} aria-hidden="true" />
+          </button>
+          <TimerWidget />
+        </div>
+      ) : (
       <aside className="rail">
         <NavLink to="/" className="brand" aria-label="DataPath, ir al panel">
           <BrandMark />
@@ -123,6 +150,10 @@ export default function App() {
           <GameBadge />
           <TimerWidget />
           <NextNote />
+          <button className="rail-logout" onClick={toggleRail}>
+            <PanelLeftClose size={16} aria-hidden="true" />
+            <span>Ocultar menú</span>
+          </button>
           {auth.required && (
             <button className="rail-logout" onClick={logout}>
               <LogOut size={16} aria-hidden="true" />
@@ -131,6 +162,7 @@ export default function App() {
           )}
         </div>
       </aside>
+      )}
       <main className="main">
         <NextNote strip />
         <Routes>

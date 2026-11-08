@@ -25,7 +25,7 @@ export default function Topic() {
   const tab = TABS.some((t) => t.id === params.get("tab")) ? params.get("tab") : "teoria";
   const { track, setTrack } = useTrack();
   const { data: topic, loading, error, reload, setData } = useAsync(() => api.topic(slug, track), [slug, track]);
-  const { afterSubmit } = useGame();
+  const { afterSubmit, celebrate, refresh } = useGame();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -57,13 +57,17 @@ export default function Topic() {
 
   async function toggleTheory() {
     const next = !progress.theory_done;
+    const wasDone = progress.status === "completado";
     const updated = await api.setTheory(topic.slug, next);
     setData((previous) => ({ ...previous, progress: updated }));
+    if (!wasDone && updated.status === "completado") celebrate({ icon: "BookCheck", title: "¡Tema completado!", text: topic.title });
+    refresh();
   }
 
   async function submitExercise(exercise, body) {
+    const wasDone = topic.progress.status === "completado";
     const result = await api.submit(exercise.id, body);
-    afterSubmit(result);
+    afterSubmit(result, { topicCompleted: !wasDone && result.progress.status === "completado", topicTitle: topic.title });
     setData((previous) => ({
       ...previous,
       progress: result.progress,

@@ -12,7 +12,13 @@ class XpTests(unittest.TestCase):
     def test_first_try_bonus_and_no_double_count(self):
         attempts = [(D, "a", True), (D, "a", True), (D, "b", False), (D, "b", True)]
         entries = game.xp_entries(attempts, [], [])
-        self.assertEqual([xp for _, xp, _ in entries], [15, 10])
+        doble = lambda ex: 2 if game.es_golpe_de_suerte(ex, D) else 1
+        self.assertEqual([xp for _, xp, _ in entries], [15 * doble("a"), 10 * doble("b")])
+
+    def test_golpe_de_suerte(self):
+        self.assertEqual(game.es_golpe_de_suerte("x1", D), game.es_golpe_de_suerte("x1", D), "siempre igual para el mismo día")
+        veces = sum(game.es_golpe_de_suerte("ej-%d" % i, D) for i in range(6000))
+        self.assertTrue(800 < veces < 1200, "más o menos 1 de cada 6: %d" % veces)
 
     def test_theory_counts_once_per_topic(self):
         activities = [(D, "theory", "t1"), (D, "theory", "t1"), (D, "theory", "t2")]
