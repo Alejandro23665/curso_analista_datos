@@ -50,7 +50,7 @@ export default function Interests() {
               </div>
               <div className="row between">
                 <span className="muted small num">
-                  {area.topics_completed}/{area.topics_total} temas · {area.blocks} bloques · {area.total_hours} h
+                  {area.topics_completed}/{area.topics_total} temas · {area.blocks} {area.blocks === 1 ? "bloque" : "bloques"} · {area.total_hours} h
                 </span>
                 <span className="link-arrow">
                   {area.percent > 0 ? "Continuar" : "Empezar"} <ArrowRight size={14} aria-hidden="true" />
