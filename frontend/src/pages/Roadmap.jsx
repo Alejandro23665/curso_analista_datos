@@ -5,12 +5,13 @@ import Squares, { exerciseSquares, SquaresLegend } from "../components/Squares.j
 import { useAsync } from "../hooks.js";
 import { useTrack } from "../track.jsx";
 import { STATUS } from "../util.js";
+import Loading from "../components/Loading.jsx";
 
 export default function Roadmap() {
   const { track, setTrack } = useTrack();
   const { data, loading, error, reload } = useAsync(() => api.progress(track), [track]);
 
-  if (loading && !data) return <div className="loading">Cargando…</div>;
+  if (loading && !data) return <Loading text="Cargando…" />;
   if (error)
     return (
       <div className="page narrow">

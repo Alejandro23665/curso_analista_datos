@@ -20,6 +20,7 @@ import Topic from "./pages/Topic.jsx";
 import { GameBadge, GameProvider, useGame } from "./study/game.jsx";
 import { TimerProvider, TimerWidget } from "./study/timer.jsx";
 import { useTrack } from "./track.jsx";
+import Loading from "./components/Loading.jsx";
 
 function NotFound() {
   return (
@@ -110,7 +111,7 @@ export default function App() {
     return () => window.removeEventListener(UNAUTHORIZED_EVENT, onUnauthorized);
   }, []);
 
-  if (!auth.checked) return <div className="loading">Cargando…</div>;
+  if (!auth.checked) return <Loading text="Cargando…" />;
   if (auth.required && !auth.ok) return <Login onSuccess={() => setAuth((previous) => ({ ...previous, ok: true }))} />;
 
   async function logout() {

@@ -4,6 +4,7 @@ import { ArrowRight, TrendingDown, TrendingUp } from "lucide-react";
 import { api } from "../api.js";
 import { useAsync } from "../hooks.js";
 import { LEVELS, percent } from "../util.js";
+import Loading from "../components/Loading.jsx";
 
 function LevelLabel({ level }) {
   const meta = LEVELS[level];
@@ -46,7 +47,7 @@ function SkillList({ skills, empty }) {
 export default function Skills() {
   const { data, loading, error, reload } = useAsync(() => api.stats(), []);
 
-  if (loading && !data) return <div className="loading">Cargando…</div>;
+  if (loading && !data) return <Loading text="Cargando…" />;
   if (error)
     return (
       <div className="page narrow">

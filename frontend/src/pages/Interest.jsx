@@ -5,13 +5,14 @@ import Markdown from "../components/Markdown.jsx";
 import Squares, { exerciseSquares, SquaresLegend } from "../components/Squares.jsx";
 import { useAsync } from "../hooks.js";
 import { STATUS } from "../util.js";
+import Loading from "../components/Loading.jsx";
 
 // Un área de interés: sus bloques y temas, con el mismo cuaderno de cuadritos que la ruta.
 export default function Interest() {
   const { slug } = useParams();
   const { data, loading, error, reload } = useAsync(() => api.interest(slug), [slug]);
 
-  if (loading && !data) return <div className="loading">Cargando…</div>;
+  if (loading && !data) return <Loading text="Cargando…" />;
   if (error)
     return (
       <div className="page narrow">

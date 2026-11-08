@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Flame, Lock, ShieldCheck, Target, Timer, Volume2, VolumeX } from "lucide-react";
 import { useGame, AchievementIcon, setSounds, soundsOn } from "../study/game.jsx";
 import { percent } from "../util.js";
+import Loading from "../components/Loading.jsx";
 
 // Tu progreso de estudio: nivel, racha con protectores, meta diaria, resumen semanal, calendario y logros.
 
@@ -64,7 +65,7 @@ function Calendar({ days }) {
 
 export default function Progress() {
   const { game } = useGame();
-  if (!game) return <div className="loading">Cargando tu progreso…</div>;
+  if (!game) return <Loading text="Cargando tu progreso…" />;
 
   const { level, streak, weekly } = game;
   const unlocked = game.achievements.filter((a) => a.unlocked).length;

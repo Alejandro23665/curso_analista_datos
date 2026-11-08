@@ -5,6 +5,7 @@ import { api } from "../api.js";
 import AudioButtons from "../english/AudioButtons.jsx";
 import { canSpeak, speak } from "../english/speech.js";
 import { useAsync } from "../hooks.js";
+import Loading from "../components/Loading.jsx";
 
 const GRADES = [
   { id: "otra", label: "Otra vez", help: "No me acordaba" },
@@ -59,7 +60,7 @@ export default function EnglishVocab() {
         </div>
       </div>
     );
-  if ((loading && !data) || !queue) return <div className="loading">Cargando tarjetas…</div>;
+  if ((loading && !data) || !queue) return <Loading text="Cargando tarjetas…" />;
 
   async function grade(id) {
     setBusy(true);

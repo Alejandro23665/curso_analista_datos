@@ -7,6 +7,7 @@ import Squares from "../components/Squares.jsx";
 import AudioButtons from "../english/AudioButtons.jsx";
 import EnglishExercise, { EN_KINDS } from "../english/EnglishExercise.jsx";
 import { useAsync } from "../hooks.js";
+import Loading from "../components/Loading.jsx";
 
 const TABS = [
   { id: "leccion", label: "Lección", Icon: BookOpen },
@@ -23,7 +24,7 @@ export default function EnglishUnit() {
     window.scrollTo(0, 0);
   }, [slug, tab]);
 
-  if (loading && !unit) return <div className="loading">Cargando unidad…</div>;
+  if (loading && !unit) return <Loading text="Cargando unidad…" />;
   if (error)
     return (
       <div className="page narrow">

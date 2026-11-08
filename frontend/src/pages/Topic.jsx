@@ -12,6 +12,7 @@ import { useTrack } from "../track.jsx";
 import { useGame } from "../study/game.jsx";
 import { prewarm } from "../pyRunner.js";
 import { KINDS } from "../util.js";
+import Loading from "../components/Loading.jsx";
 
 const TABS = [
   { id: "teoria", label: "Teoría", Icon: BookOpen },
@@ -40,7 +41,7 @@ export default function Topic() {
     if (python.length) prewarm([...new Set(python.flatMap((e) => e.packages))]);
   }, [topic, tab]);
 
-  if (loading && !topic) return <div className="loading">Cargando tema…</div>;
+  if (loading && !topic) return <Loading text="Cargando tema…" />;
   if (error)
     return (
       <div className="page narrow">

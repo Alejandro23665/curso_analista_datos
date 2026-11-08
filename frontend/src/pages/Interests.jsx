@@ -2,12 +2,13 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { api } from "../api.js";
 import { useAsync } from "../hooks.js";
+import Loading from "../components/Loading.jsx";
 
 // Temas de interés: áreas para estudiar en el tiempo libre. No forman parte de la ruta ni del panel principal.
 export default function Interests() {
   const { data, loading, error, reload } = useAsync(() => api.interests(), []);
 
-  if (loading && !data) return <div className="loading">Cargando…</div>;
+  if (loading && !data) return <Loading text="Cargando…" />;
   if (error)
     return (
       <div className="page narrow">

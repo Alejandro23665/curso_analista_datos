@@ -6,6 +6,7 @@ import Squares, { exerciseSquares, SquaresLegend } from "../components/Squares.j
 import { canListen, canSpeak, englishVoices, getSettings, saveSettings, speak } from "../english/speech.js";
 import { useAsync } from "../hooks.js";
 import { formatDate, percent, STATUS } from "../util.js";
+import Loading from "../components/Loading.jsx";
 
 const LEVEL_TEXT = {
   A1: "Empieza por el bloque A1 · Bases. Usa siempre el audio lento, repite cada frase en voz alta y haz el vocabulario a diario.",
@@ -17,7 +18,7 @@ const LEVEL_TEXT = {
 export default function English() {
   const { data, loading, error, reload } = useAsync(() => api.english.overview(), []);
 
-  if (loading && !data) return <div className="loading">Cargando…</div>;
+  if (loading && !data) return <Loading text="Cargando…" />;
   if (error)
     return (
       <div className="page narrow">

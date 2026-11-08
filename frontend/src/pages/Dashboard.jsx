@@ -6,6 +6,7 @@ import Squares, { SquaresLegend, topicSquare } from "../components/Squares.jsx";
 import { useAsync } from "../hooks.js";
 import { useTrack } from "../track.jsx";
 import { formatDate, percent } from "../util.js";
+import Loading from "../components/Loading.jsx";
 
 function Tracks({ tracks, current, onSelect }) {
   return (
@@ -49,7 +50,7 @@ export default function Dashboard() {
   const progress = useAsync(() => api.progress(track), [track]);
   const stats = useAsync(() => api.stats(), []);
 
-  if (progress.loading && !progress.data) return <div className="loading">Cargando tu progreso…</div>;
+  if (progress.loading && !progress.data) return <Loading text="Cargando tu progreso…" />;
   if (progress.error)
     return (
       <div className="page narrow">
@@ -192,7 +193,7 @@ export default function Dashboard() {
               </ResponsiveContainer>
             </div>
           ) : (
-            <p className="muted">Cargando…</p>
+            <p className="muted"><Loading inline /></p>
           )}
         </section>
 
@@ -204,7 +205,7 @@ export default function Dashboard() {
             </Link>
           </div>
           {!s ? (
-            <p className="muted">Cargando…</p>
+            <p className="muted"><Loading inline /></p>
           ) : s.totals.attempts === 0 ? (
             <p className="muted">
               Aún no hay datos. Resuelve unos cuantos ejercicios y aquí aparecerá qué se te da mejor y qué debes reforzar.

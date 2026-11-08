@@ -7,6 +7,7 @@ import CodeBlock from "./CodeBlock.jsx";
 import CodeEditor from "./CodeEditor.jsx";
 import Markdown from "./Markdown.jsx";
 import ResultTable from "./ResultTable.jsx";
+import Loading from "./Loading.jsx";
 
 // `onSubmit(body)` envía el intento al servidor y devuelve su respuesta.
 export default function ExercisePanel({ exercise, solved, onSubmit }) {
@@ -121,7 +122,7 @@ function PythonExercise({ exercise, onSubmit }) {
         <button className="btn primary" disabled={busy} onClick={() => execute(true)}>
           <Check size={16} aria-hidden="true" /> Comprobar
         </button>
-        {busy && <span className="muted small">{status || "Ejecutando… (la primera vez descarga Python, puede tardar)"}</span>}
+        {busy && <span className="muted small"><Loading inline text={status || "Ejecutando… (la primera vez descarga Python, puede tardar)"} /></span>}
         <span className="muted small push">
           <kbd>Ctrl</kbd> + <kbd>Enter</kbd> para ejecutar
         </span>

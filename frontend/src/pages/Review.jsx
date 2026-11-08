@@ -7,6 +7,7 @@ import Squares from "../components/Squares.jsx";
 import { useAsync } from "../hooks.js";
 import { prewarm } from "../pyRunner.js";
 import { useGame } from "../study/game.jsx";
+import Loading from "../components/Loading.jsx";
 
 const BOX_LABEL = ["Recién fallado o nuevo", "Repaso a los 3 días", "Repaso a la semana", "Repaso a las 3 semanas", "Dominado"];
 
@@ -26,7 +27,7 @@ export default function Review() {
     if (data.items.some((i) => i.exercise.kind === "python")) prewarm([...new Set(packages)]);
   }, [data]);
 
-  if (loading && !data) return <div className="loading">Preparando tu repaso…</div>;
+  if (loading && !data) return <Loading text="Preparando tu repaso…" />;
   if (error)
     return (
       <div className="page narrow">

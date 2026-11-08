@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, Headphones, TriangleAlert } from "lucide-react";
 import { api } from "../api.js";
 import AudioButtons from "../english/AudioButtons.jsx";
 import { useAsync } from "../hooks.js";
+import Loading from "../components/Loading.jsx";
 
 const DONT_KNOW = -1;
 
@@ -23,7 +24,7 @@ export default function EnglishPlacement() {
   const [busy, setBusy] = useState(false);
   const [sendError, setSendError] = useState("");
 
-  if (loading && !data) return <div className="loading">Cargando…</div>;
+  if (loading && !data) return <Loading text="Cargando…" />;
   if (error)
     return (
       <div className="page narrow">
