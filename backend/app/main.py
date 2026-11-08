@@ -194,7 +194,7 @@ def curriculum():
 
 
 @app.get("/api/topics/{slug}")
-def get_topic(slug: str, track: str | None = None, db: Session = Depends(get_db)):
+def get_topic(slug: str, track: str | None = None, area: str | None = None, db: Session = Depends(get_db)):
     topic = content.get_topic(slug)
     if not topic:
         raise HTTPException(404, "Tema no encontrado")
@@ -204,11 +204,11 @@ def get_topic(slug: str, track: str | None = None, db: Session = Depends(get_db)
             select(Attempt.exercise_id).where(Attempt.topic_slug == slug, Attempt.correct.is_(True)).distinct()
         )
     }
-    if topic.get("interest"):
-        # Tema de interés: se navega dentro de su área, no de una ruta
-        area = content.intereses.get_area(topic["interest"])
-        belongs, order = [], content.intereses.area_topic_slugs(area)
-        chosen = {"slug": area["slug"], "title": area["title"], "kind": "interest"}
+    # Tema de interés (o tema de una ruta abierto desde un área que lo reutiliza): se navega dentro del área
+    area_ctx = content.intereses.get_area(topic.get("interest") or area or "")
+    if area_ctx and slug in content.intereses.area_topic_slugs(area_ctx):
+        belongs, order = [], content.intereses.area_topic_slugs(area_ctx)
+        chosen = {"slug": area_ctx["slug"], "title": area_ctx["title"], "kind": "interest"}
     else:
         belongs = content.tracks_with_topic(slug)
         chosen = content.get_track(track)

@@ -24,7 +24,9 @@ export default function Topic() {
   const [params, setParams] = useSearchParams();
   const tab = TABS.some((t) => t.id === params.get("tab")) ? params.get("tab") : "teoria";
   const { track, setTrack } = useTrack();
-  const { data: topic, loading, error, reload, setData } = useAsync(() => api.topic(slug, track), [slug, track]);
+  // Un tema compartido entre una ruta y un área de interés se abre con ?area=... para navegar dentro del área.
+  const area = params.get("area") || "";
+  const { data: topic, loading, error, reload, setData } = useAsync(() => api.topic(slug, track, area), [slug, track, area]);
   const { afterSubmit, celebrate, refresh } = useGame();
 
   useEffect(() => {
@@ -53,7 +55,9 @@ export default function Topic() {
     );
 
   const progress = topic.progress;
-  const goTab = (id) => setParams(id === "teoria" ? {} : { tab: id });
+  const goTab = (id) => setParams({ ...(id === "teoria" ? {} : { tab: id }), ...(area ? { area } : {}) });
+  const linkArea = topic && topic.track.kind === "interest" ? topic.track.slug : "";
+  const areaQuery = linkArea ? "?area=" + encodeURIComponent(linkArea) : "";
 
   async function toggleTheory() {
     const next = !progress.theory_done;
@@ -177,14 +181,14 @@ export default function Topic() {
 
       <footer className="topic-nav">
         {topic.prev ? (
-          <Link className="btn ghost" to={"/tema/" + topic.prev}>
+          <Link className="btn ghost" to={"/tema/" + topic.prev + areaQuery}>
             <ArrowLeft size={16} aria-hidden="true" /> Tema anterior
           </Link>
         ) : (
           <span />
         )}
         {topic.next ? (
-          <Link className="btn ghost" to={"/tema/" + topic.next}>
+          <Link className="btn ghost" to={"/tema/" + topic.next + areaQuery}>
             Siguiente tema <ArrowRight size={16} aria-hidden="true" />
           </Link>
         ) : (

@@ -43,7 +43,7 @@ export default function Interest() {
         </div>
         {data.next_topic && (
           <div className="actions">
-            <Link className="btn primary" to={"/tema/" + data.next_topic.slug}>
+            <Link className="btn primary" to={"/tema/" + data.next_topic.slug + "?area=" + data.slug}>
               {data.next_topic.percent > 0 ? "Continuar con " : "Empezar con "} {data.next_topic.title} <ArrowRight size={16} aria-hidden="true" />
             </Link>
           </div>
@@ -77,7 +77,7 @@ export default function Interest() {
               const square = isNext ? "next" : STATUS[topic.status].square;
               return (
                 <li key={topic.slug}>
-                  <Link to={"/tema/" + topic.slug} className={"topic-row" + (isNext ? " next" : "")}>
+                  <Link to={"/tema/" + topic.slug + "?area=" + data.slug} className={"topic-row" + (isNext ? " next" : "")}>
                     <span className={"sq " + square} aria-label={isNext ? "Siguiente" : STATUS[topic.status].label} />
                     <span className="title">
                       {topic.title}

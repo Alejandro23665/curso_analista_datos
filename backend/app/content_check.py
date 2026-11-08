@@ -127,7 +127,8 @@ def main():
             errors.append("area %s: tema repetido" % area["slug"])
         for slug in vistos:
             topic = content.get_topic(slug)
-            if not topic or topic.get("interest") != area["slug"]:
+            # Un área puede reutilizar temas de las rutas (el progreso es por tema y se comparte)
+            if not topic or topic.get("interest") not in (None, area["slug"]):
                 errors.append("area %s: el tema %s no existe en el area" % (area["slug"], slug))
         en_areas.update(vistos)
     for topic in content.TOPICS:

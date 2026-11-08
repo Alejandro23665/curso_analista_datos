@@ -33,7 +33,13 @@ export const api = {
   logout: () => request("/logout", send("POST", {})),
   progress: (track) => request("/progress" + (track ? "?track=" + encodeURIComponent(track) : "")),
   stats: () => request("/stats"),
-  topic: (slug, track) => request("/topics/" + slug + (track ? "?track=" + encodeURIComponent(track) : "")),
+  topic: (slug, track, area) => {
+    const query = new URLSearchParams();
+    if (track) query.set("track", track);
+    if (area) query.set("area", area);
+    const text = query.toString();
+    return request("/topics/" + slug + (text ? "?" + text : ""));
+  },
   setTheory: (slug, done) => request("/topics/" + slug + "/theory", send("POST", { done })),
   saveNote: (slug, content) => request("/topics/" + slug + "/note", send("PUT", { content })),
   runSql: (query) => request("/sql/run", send("POST", { query })),
